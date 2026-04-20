@@ -1,12 +1,12 @@
 {
     "/rest/dark/v1/agent": {
-        "target": "http://127.0.0.1:8281",
+        "target": "http://127.0.0.1:8080",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug"
     },
     "/rest": {
-        "target": "http://127.0.0.1:8281",
+        "target": "http://127.0.0.1:8080",
         "secure": false,
         "changeOrigin": true,
         "logLevel": "debug"
