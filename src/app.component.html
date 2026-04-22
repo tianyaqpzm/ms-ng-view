@@ -1,15 +1,73 @@
-<div class="flex flex-col h-screen w-screen overflow-hidden bg-black text-white">
-  <button mat-icon-button (click)="toggleTheme()" [matTooltip]="isDarkMode() ? '切换到亮色模式' : '切换到暗黑模式'">
+<div class="flex flex-col h-screen w-screen overflow-hidden bg-white dark:bg-[#131314] text-gray-900 dark:text-[#e3e3e3] transition-colors duration-300">
 
-    <mat-icon class="material-symbols-outlined">
-      {{ isDarkMode() ? 'light_mode' : 'dark_mode' }}
-    </mat-icon>
+    <!-- ===== Global Top Bar (hidden on /chat which has its own header) ===== -->
+    @if (!isChatRoute()) {
+        <header class="flex-shrink-0 flex items-center justify-between px-6 h-14 bg-white/80 dark:bg-[#1e1f20]/80 backdrop-blur-md border-b border-gray-200 dark:border-[#444746] z-50">
+            <!-- Left: App Brand -->
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-red-400"></div>
+                <span class="font-semibold text-sm tracking-tight text-gray-800 dark:text-[#e3e3e3]">Timekeeper AI</span>
+            </div>
 
-  </button>
+            <!-- Right: Theme + User -->
+            <div class="flex items-center gap-2">
+                <!-- Theme Toggle -->
+                <button
+                    (click)="toggleTheme()"
+                    [matTooltip]="isDarkMode() ? '切换到亮色模式' : '切换到暗黑模式'"
+                    class="flex items-center justify-center w-9 h-9 rounded-full text-gray-500 dark:text-[#c4c7c5] hover:bg-gray-100 dark:hover:bg-[#333537] transition-colors">
+                    <mat-icon class="!text-[20px] !w-5 !h-5">{{ isDarkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+                </button>
 
-  <!-- Main Viewport -->
-  <div class="flex-1 overflow-hidden relative">
-    <router-outlet></router-outlet>
-  </div>
+                <!-- User Profile Button -->
+                @if (currentUser()) {
+                    <button
+                        [matMenuTriggerFor]="globalProfileMenu"
+                        class="flex items-center justify-center rounded-full hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600 transition-all focus:outline-none ml-1">
+                        @if (currentUser()!.avatar) {
+                            <img [src]="currentUser()!.avatar" class="w-8 h-8 rounded-full object-cover">
+                        } @else {
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium text-sm">
+                                {{ currentUser()!.name?.charAt(0)?.toUpperCase() || 'U' }}
+                            </div>
+                        }
+                    </button>
+
+                    <!-- Global Profile Menu -->
+                    <mat-menu #globalProfileMenu="matMenu" class="mt-2 !rounded-xl !shadow-xl">
+                        <div class="px-4 py-3 flex flex-col items-center border-b border-gray-100 dark:border-[#444746] mb-1">
+                            @if (currentUser()!.avatar) {
+                                <img [src]="currentUser()!.avatar" class="w-12 h-12 rounded-full object-cover mb-2">
+                            } @else {
+                                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium text-lg mb-2">
+                                    {{ currentUser()!.name?.charAt(0)?.toUpperCase() || 'U' }}
+                                </div>
+                            }
+                            <span class="text-sm font-semibold text-gray-900 dark:text-[#e3e3e3] truncate max-w-full">{{ currentUser()!.name }}</span>
+                            <span class="text-xs text-gray-500 dark:text-[#8e918f] truncate max-w-full">Cardoor Identity</span>
+                        </div>
+                        <button mat-menu-item>
+                            <mat-icon class="text-gray-500">settings</mat-icon>
+                            <span>个人偏好设置</span>
+                        </button>
+                        <button mat-menu-item>
+                            <mat-icon class="text-gray-500">account_circle</mat-icon>
+                            <span>账号管理 (Cardoor)</span>
+                        </button>
+                        <mat-divider></mat-divider>
+                        <button mat-menu-item class="!text-red-500" (click)="document.location.href='/logout'">
+                            <mat-icon class="!text-red-500">exit_to_app</mat-icon>
+                            <span>安全退出</span>
+                        </button>
+                    </mat-menu>
+                }
+            </div>
+        </header>
+    }
+
+    <!-- Main Viewport -->
+    <div class="flex-1 overflow-hidden relative">
+        <router-outlet></router-outlet>
+    </div>
 
 </div>

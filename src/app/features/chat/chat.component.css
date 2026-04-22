@@ -34,3 +34,60 @@
     font-size: 1rem;
     line-height: 1.6;
 }
+
+/* Gemini Thinking Dots Animation */
+.gemini-thinking-dots {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.gemini-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    /* Official Google Gemini Colors */
+    background: linear-gradient(74deg, #4285f4, #9b72cb, #d96570);
+    background-size: 200% auto;
+    animation: geminiStepPulse 1.5s infinite ease-in-out;
+    opacity: 0.7;
+}
+
+.gemini-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.gemini-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes geminiStepPulse {
+    0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.4;
+        background-position: 0% 50%;
+    }
+    50% {
+        transform: scale(1.4);
+        opacity: 1;
+        background-position: 100% 50%;
+    }
+}
+
+/* Response Action Icons */
+.mat-icon-button.!w-8.!h-8 {
+    line-height: 32px;
+}
+
+.mat-icon-button .mat-icon {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.mat-icon-button:hover .mat-icon {
+    transform: scale(1.15);
+}
+
+.mat-icon-button:active .mat-icon {
+    transform: scale(0.9);
+}

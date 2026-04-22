@@ -1,53 +1,68 @@
-import { CommonModule, DOCUMENT, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject, PLATFORM_ID, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatTooltipModule } from '@angular/material/tooltip'; // 👈 必须补上这行！
-import { RouterOutlet } from '@angular/router';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
+import { ThemeService } from './app/core/services/theme.service';
+import { UserProfile, UserService } from './app/core/services/user.service';
 
 @Component({
-  selector: 'app-root',
-  imports: [
-    RouterOutlet, MatToolbarModule, MatButtonModule, MatIconModule, MatTooltipModule,
-    CommonModule,
-    MatToolbarModule,
-    MatButtonModule,
-    MatIconModule
-  ],
-  templateUrl: './app.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-root',
+    standalone: true,
+    imports: [
+        RouterOutlet,
+        CommonModule,
+        MatButtonModule,
+        MatIconModule,
+        MatTooltipModule,
+        MatMenuModule,
+        MatDividerModule,
+    ],
+    templateUrl: './app.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent {
-  // 使用 Signal 来管理状态 (Angular 19 推荐)
-  isDarkMode = signal(false);
+export class AppComponent implements OnInit {
+    protected currentUser = signal<UserProfile | null>(null);
+    /** 当前路由是否为 chat 页面（chat 页面自带 profile UI，全局顶栏隐藏） */
+    protected isChatRoute = signal(false);
 
-  constructor(
-    @Inject(DOCUMENT) private document: Document,
-    @Inject(PLATFORM_ID) private platformId: Object
-  ) {
-    // 初始化：检查本地存储或系统偏好
-    if (isPlatformBrowser(this.platformId)) {
-      const isDark = localStorage.getItem('theme') === 'dark' ||
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    protected get isDarkMode() { return this.themeService.isDarkMode; }
 
-      this.setTheme(isDark);
+    constructor(
+        public themeService: ThemeService,
+        private userService: UserService,
+        private router: Router
+    ) {}
+
+    ngOnInit() {
+        // 监听路由变化，判断是否在 chat 页
+        this.router.events.pipe(
+            filter(e => e instanceof NavigationEnd)
+        ).subscribe((e: any) => {
+            this.isChatRoute.set((e.urlAfterRedirects as string).includes('/chat'));
+        });
+        // 初始判断（直接访问）
+        this.isChatRoute.set(this.router.url.includes('/chat'));
+
+        this.loadProfile();
     }
-  }
 
-  toggleTheme() {
-    this.setTheme(!this.isDarkMode());
-  }
-
-  private setTheme(isDark: boolean) {
-    this.isDarkMode.set(isDark);
-
-    if (isDark) {
-      this.document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      this.document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+    private async loadProfile() {
+        try {
+            const user = await this.userService.getCurrentUser();
+            this.currentUser.set(user);
+        } catch (e) {
+            console.error('Failed to load user profile', e);
+        }
     }
-  }
+
+    protected toggleTheme() {
+        this.themeService.toggleTheme();
+    }
+
+    protected readonly document = document;
 }

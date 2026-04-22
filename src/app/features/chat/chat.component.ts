@@ -1,16 +1,26 @@
-import { CommonModule, DOCUMENT } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpEventType } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, ElementRef, Inject, ViewChild, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule } from '@angular/material/divider';
 import { firstValueFrom } from 'rxjs';
+import { KnowledgeService, Topic } from '../../core/services/knowledge.service';
+import { UserService, UserProfile } from '../../core/services/user.service';
+import { ThemeService } from '../../core/services/theme.service';
 
 interface ChatMessage {
     role: 'user' | 'model';
     content: string;
+}
+
+interface ChatSessionDto {
+    sessionId: string;
+    title: string;
+    lastActiveTime: string;
 }
 
 @Component({
@@ -22,7 +32,8 @@ interface ChatMessage {
         MatButtonModule,
         MatIconModule,
         MatTooltipModule,
-        MatMenuModule
+        MatMenuModule,
+        MatDividerModule
     ],
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
@@ -33,49 +44,96 @@ export class ChatComponent {
     @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 
     protected isSidebarOpen = signal(true);
-    protected isDarkMode = signal(true); // Default to dark to match previous behavior
+    protected get isDarkMode() { return this.themeService.isDarkMode; }
     protected userInput = signal('');
     protected messages = signal<ChatMessage[]>([]);
     protected selectedFiles = signal<File[]>([]);
     protected isRecording = signal(false);
     protected isCameraOpen = signal(false);
+    protected isThinking = signal(false);
+
+    protected activeSessionId = signal<string>('');
+    protected chatSessions = signal<ChatSessionDto[]>([]);
+    protected currentUser = signal<UserProfile | null>(null);
 
     private mediaStream: MediaStream | null = null;
     private cameraStream: MediaStream | null = null;
     private sessionId = '';
 
+    protected topics = signal<Topic[]>([]);
+    protected selectedTopic = signal<Topic | null>(null);
+    protected responseRatings = signal<Map<number, 'good' | 'bad'>>(new Map());
+
+    protected readonly document = document;
+
     constructor(
-        @Inject(DOCUMENT) private document: Document,
-        private http: HttpClient
+        private http: HttpClient,
+        private knowledgeService: KnowledgeService,
+        private userService: UserService,
+        public themeService: ThemeService
     ) {
-        // Initialize theme based on default signal
-        effect(() => {
-            if (this.isDarkMode()) {
-                this.document.documentElement.classList.add('dark');
-            } else {
-                this.document.documentElement.classList.remove('dark');
-            }
-        });
-
         this.initSession();
+        this.loadTopics();
+        this.loadProfile();
     }
 
-    private initSession() {
-        // Simple UUID generation or load from storage
-        let stored = localStorage.getItem('chat_session_id');
-        if (!stored) {
-            stored = crypto.randomUUID();
-            localStorage.setItem('chat_session_id', stored);
+    private async loadProfile() {
+        try {
+            const user = await this.userService.getCurrentUser();
+            this.currentUser.set(user);
+        } catch(e) {
+            console.error('No valid user bound');
         }
-        this.sessionId = stored;
-        this.loadHistory();
     }
 
-    private async loadHistory() {
+    private async loadTopics() {
+        try {
+            const result = await this.knowledgeService.getTopics();
+            this.topics.set(result);
+        } catch (e) {
+            console.error('Failed to load KB topics for chat', e);
+        }
+    }
+
+    protected selectTopic(topic: Topic | null) {
+        this.selectedTopic.set(topic);
+    }
+
+    private async initSession() {
+        try {
+            const sessionsResponse = await firstValueFrom(
+                this.http.get<ChatSessionDto[]>(`/rest/dark/v1/history/sessions`)
+            );
+            this.chatSessions.set(sessionsResponse);
+
+            if (sessionsResponse.length > 0) {
+                // Load the most recently active session
+                this.switchSession(sessionsResponse[0].sessionId);
+            } else {
+                this.createNewSession();
+            }
+        } catch (err) {
+            console.error('Failed to load sessions', err);
+            this.createNewSession(); // fallback
+        }
+    }
+
+    protected createNewSession() {
+        const newSessionId = crypto.randomUUID();
+        this.activeSessionId.set(newSessionId);
+        this.messages.set([]);
+    }
+
+    protected switchSession(sessionId: string) {
+        this.activeSessionId.set(sessionId);
+        this.loadHistory(sessionId);
+    }
+
+    private async loadHistory(sessionId: string) {
         try {
             const history = await firstValueFrom(
                 this.http.get<any[]>(`/rest/dark/v1/history`, {
-                    params: { sessionId: this.sessionId }
+                    params: { sessionId }
                 })
             );
 
@@ -103,7 +161,7 @@ export class ChatComponent {
     }
 
     protected toggleTheme() {
-        this.isDarkMode.update(v => !v);
+        this.themeService.toggleTheme();
     }
 
     protected onFileSelected(event: Event) {
@@ -168,6 +226,93 @@ export class ChatComponent {
         this.isCameraOpen.set(false);
     }
 
+    protected isLastUserMessage(index: number): boolean {
+        const msgs = this.messages();
+        for (let i = index + 1; i < msgs.length; i++) {
+            if (msgs[i].role === 'user') return false;
+        }
+        return true;
+    }
+
+    protected isResponseFailed(index: number): boolean {
+        const msgs = this.messages();
+        if (index + 1 < msgs.length) {
+            const nextMsg = msgs[index + 1];
+            return nextMsg.role === 'model' && nextMsg.content.startsWith('Error:');
+        }
+        return false;
+    }
+
+    protected copyText(text: string) {
+        navigator.clipboard.writeText(text);
+    }
+
+    protected editMessage(index: number) {
+        const msgs = this.messages();
+        const content = msgs[index].content;
+        // Optionally clean up any prepended "[File: xxx]" 
+        const cleanedContent = content.replace(/ \[(?:File|Image|Photo):[^\]]*\]/g, '').trim();
+        
+        this.messages.set(msgs.slice(0, index));
+        this.userInput.set(cleanedContent);
+    }
+
+    protected retryMessage(index: number) {
+        const msgs = this.messages();
+        const content = msgs[index].content;
+        const cleanedContent = content.replace(/ \[(?:File|Image|Photo):[^\]]*\]/g, '').trim();
+        
+        this.messages.set(msgs.slice(0, index));
+        this.userInput.set(cleanedContent);
+        // Small delay to allow Angular binding to populate textarea before send
+        setTimeout(() => this.sendMessage(), 0);
+    }
+
+    protected rateResponse(index: number, rating: 'good' | 'bad') {
+        const ratings = new Map(this.responseRatings());
+        const existing = ratings.get(index);
+        if (existing === rating) {
+            ratings.delete(index);
+        } else {
+            ratings.set(index, rating);
+        }
+        this.responseRatings.set(ratings);
+    }
+
+    protected regenerateResponse(index: number) {
+        let userMsgIndex = -1;
+        const msgs = this.messages();
+        for (let i = index - 1; i >= 0; i--) {
+            if (msgs[i].role === 'user') {
+                userMsgIndex = i;
+                break;
+            }
+        }
+
+        if (userMsgIndex !== -1) {
+            const userMsg = msgs[userMsgIndex];
+            const cleanedContent = userMsg.content.replace(/ \[(?:File|Image|Photo):[^\]]*\]/g, '').trim();
+            this.messages.set(msgs.slice(0, userMsgIndex));
+            this.userInput.set(cleanedContent);
+            setTimeout(() => this.sendMessage(), 0);
+        }
+    }
+
+    protected exportResponse(index: number) {
+        try {
+            const content = this.messages()[index].content;
+            const blob = new Blob([content], { type: 'text/markdown' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `response_${index + 1}.md`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        } catch (e) {
+            console.error('Export failed', e);
+        }
+    }
+
     protected capturePhoto() {
         if (!this.videoElement || !this.canvasElement) return;
 
@@ -211,11 +356,13 @@ export class ChatComponent {
 
         let aiContent = '';
 
+        this.isThinking.set(true);
         this.http.post(
             `/rest/dark/v1/agent/chat`,
             {
-                session_id: this.sessionId,
-                message: fullContent
+                session_id: this.activeSessionId(),
+                message: fullContent,
+                topic_id: this.selectedTopic()?.id || null
             },
             {
                 observe: 'events',
@@ -237,6 +384,7 @@ export class ChatComponent {
                                 try {
                                     const parsed = JSON.parse(data);
                                     if (parsed.content) {
+                                        this.isThinking.set(false);
                                         aiContent = parsed.content;
                                         // Update the specific message in the signal array
                                         this.messages.update(msgs => {
@@ -257,6 +405,7 @@ export class ChatComponent {
                     // Final response received
                     const body = event.body;
                     if (body) {
+                        this.isThinking.set(false);
                         const lines = body.split('\n');
                         for (const line of lines) {
                             if (line.startsWith('data: ')) {
@@ -282,8 +431,14 @@ export class ChatComponent {
                         }
                     }
                 }
+                
+                // When request finishes gracefully, refresh session list to capture new chat
+                if (aiMsgIndex === 1) { // 意味着这是本session的第一句话
+                    this.refreshSessionsListSilently();
+                }
             },
             error: (error) => {
+                this.isThinking.set(false);
                 console.error('Chat error:', error);
                 this.messages.update(msgs => {
                     const newMsgs = [...msgs];
@@ -295,5 +450,14 @@ export class ChatComponent {
                 });
             }
         });
+    }
+
+    private async refreshSessionsListSilently() {
+        try {
+            const sessionsResponse = await firstValueFrom(this.http.get<ChatSessionDto[]>(`/rest/dark/v1/history/sessions`));
+            this.chatSessions.set(sessionsResponse);
+        } catch (e) {
+            // ignore
+        }
     }
 }
