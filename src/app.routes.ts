@@ -10,7 +10,7 @@ import { KnowledgeComponent } from './app/features/knowledge/knowledge.component
 import { LandingComponent } from './app/features/landing/landing.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'landing', pathMatch: 'full' },
+  { path: '', redirectTo: 'chat', pathMatch: 'full' },
   { path: 'landing', component: LandingComponent },
   { path: 'landing/dashboard', component: DashboardComponent },
   { path: 'landing/create-event', component: CreateEventComponent },
