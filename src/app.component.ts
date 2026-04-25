@@ -26,7 +26,7 @@ import { UserProfile, UserService } from './app/core/services/user.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-    protected currentUser = signal<UserProfile | null>(null);
+    protected get currentUser() { return this.userService.currentUser(); }
     /** 当前路由是否为 chat 页面（chat 页面自带 profile UI，全局顶栏隐藏） */
     protected isChatRoute = signal(false);
 
@@ -47,17 +47,6 @@ export class AppComponent implements OnInit {
         });
         // 初始判断（直接访问）
         this.isChatRoute.set(this.router.url.includes('/chat'));
-
-        this.loadProfile();
-    }
-
-    private async loadProfile() {
-        try {
-            const user = await this.userService.getCurrentUser();
-            this.currentUser.set(user);
-        } catch (e) {
-            console.error('Failed to load user profile', e);
-        }
     }
 
     protected toggleTheme() {

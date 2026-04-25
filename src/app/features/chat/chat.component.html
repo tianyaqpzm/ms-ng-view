@@ -1,17 +1,33 @@
 <div
     class="flex h-screen bg-white dark:bg-[#131314] text-gray-900 dark:text-[#e3e3e3] font-sans overflow-hidden transition-colors duration-300">
 
-    <!-- Sidebar -->
+    <!-- Global Backdrop (Overlay) -->
+    <div *ngIf="isSidebarOpen()" 
+         (click)="toggleSidebar()"
+         class="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 animate-fade-in backdrop-blur-[2px]">
+    </div>
+
+    <!-- Unified Sidebar Drawer -->
     <aside
-        class="flex-shrink-0 bg-gray-50 dark:bg-[#1e1f20] transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-[#444746]"
-        [class.w-72]="isSidebarOpen()" [class.w-0]="!isSidebarOpen()" [class.overflow-hidden]="!isSidebarOpen()">
-        <div class="p-4 h-full flex flex-col">
+        class="fixed h-full z-50 flex-shrink-0 bg-gray-50 dark:bg-[#1e1f20] transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-[#444746] shadow-2xl"
+        [class.w-72]="isSidebarOpen()" 
+        [class.w-0]="!isSidebarOpen()" 
+        [class.-translate-x-full]="!isSidebarOpen()"
+        [class.translate-x-0]="isSidebarOpen()"
+        [class.overflow-hidden]="!isSidebarOpen()">
+        
+        <div class="p-4 h-full flex flex-col w-72">
             <div class="flex items-center justify-between mb-6">
                 <button mat-icon-button (click)="toggleSidebar()"
                     class="text-gray-500 dark:text-[#c4c7c5] hover:bg-gray-200 dark:hover:bg-[#333537] rounded-full">
                     <mat-icon>menu</mat-icon>
                 </button>
-                <span class="text-lg font-medium tracking-tight" *ngIf="isSidebarOpen()">Your AI</span>
+                <div class="flex items-center gap-2" *ngIf="isSidebarOpen()">
+                    <div class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-red-500 flex items-center justify-center">
+                        <mat-icon class="text-white !text-[12px] w-3 h-3 flex items-center justify-center">auto_awesome</mat-icon>
+                    </div>
+                    <span class="text-lg font-medium tracking-tight">Timekeeper</span>
+                </div>
             </div>
 
             <div class="flex-1 overflow-y-auto space-y-2">
@@ -99,16 +115,16 @@
                         <span class="text-xs text-gray-500 dark:text-[#8e918f] truncate max-w-full">Cardoor
                             Identity</span>
                     </div>
-                    <button mat-menu-item>
+                    <button mat-menu-item (click)="openSettings()">
                         <mat-icon class="text-gray-500">settings</mat-icon>
                         <span>个人偏好设置</span>
                     </button>
-                    <button mat-menu-item>
+                    <button mat-menu-item (click)="openAccountManagement()">
                         <mat-icon class="text-gray-500">account_circle</mat-icon>
                         <span>账号管理 (Cardoor)</span>
                     </button>
                     <mat-divider></mat-divider>
-                    <button mat-menu-item class="!text-red-500" (click)="document.location.href='/logout'">
+                    <button mat-menu-item class="!text-red-500" (click)="logout()">
                         <mat-icon class="!text-red-500">exit_to_app</mat-icon>
                         <span>安全退出</span>
                     </button>
