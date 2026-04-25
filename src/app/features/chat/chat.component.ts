@@ -7,10 +7,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { firstValueFrom } from 'rxjs';
 import { KnowledgeService, Topic } from '../../core/services/knowledge.service';
 import { UserService, UserProfile } from '../../core/services/user.service';
 import { ThemeService } from '../../core/services/theme.service';
+import { AuthService } from '../../core/services/auth.service';
+import { SettingsDialogComponent } from './settings-dialog.component';
 
 interface ChatMessage {
     role: 'user' | 'model';
@@ -33,7 +36,8 @@ interface ChatSessionDto {
         MatIconModule,
         MatTooltipModule,
         MatMenuModule,
-        MatDividerModule
+        MatDividerModule,
+        MatDialogModule
     ],
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
@@ -43,7 +47,7 @@ export class ChatComponent {
     @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
     @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 
-    protected isSidebarOpen = signal(true);
+    protected isSidebarOpen = signal(false);
     protected get isDarkMode() { return this.themeService.isDarkMode; }
     protected userInput = signal('');
     protected messages = signal<ChatMessage[]>([]);
@@ -70,12 +74,15 @@ export class ChatComponent {
         private http: HttpClient,
         private knowledgeService: KnowledgeService,
         private userService: UserService,
-        public themeService: ThemeService
+        public themeService: ThemeService,
+        private authService: AuthService,
+        private dialog: MatDialog
     ) {
         this.initSession();
         this.loadTopics();
         this.loadProfile();
     }
+
 
     private async loadProfile() {
         try {
@@ -162,6 +169,22 @@ export class ChatComponent {
 
     protected toggleTheme() {
         this.themeService.toggleTheme();
+    }
+
+    protected logout() {
+        this.authService.logout();
+    }
+
+    protected openSettings() {
+        this.dialog.open(SettingsDialogComponent, {
+            width: '400px',
+            panelClass: ['custom-dialog-container', 'animate-fade-in-up']
+        });
+    }
+
+    protected openAccountManagement() {
+        // Redirect to Casdoor account page
+        window.open('https://tao-lan.122577.xyz:8381/account', '_blank');
     }
 
     protected onFileSelected(event: Event) {
