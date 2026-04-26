@@ -9,12 +9,15 @@ import { AppComponent } from './src/app.component';
 import { routes } from './src/app.routes';
 import { apiUrlInterceptor } from './src/app/core/intercepotors/base-url.interceptor';
 import { UserService } from './src/app/core/services/user.service';
+import { provideI18n } from './src/app/core/configs/i18n.config';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes, withHashLocation()),
     provideZonelessChangeDetection(),
     provideAnimations(),
+    // 国际化配置
+    ...provideI18n(),
     // 核心配置：HTTP 客户端与拦截器
     provideHttpClient(
       withFetch(),

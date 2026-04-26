@@ -29,6 +29,9 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
+      - name: Run Tests
+        run: npm test -- --watchAll=false
+
       # 构建 Angular 项目
       - name: Build Angular App
         run: npm run build

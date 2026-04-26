@@ -10,6 +10,9 @@ import { filter } from 'rxjs';
 import { ThemeService } from './app/core/services/theme.service';
 import { UserProfile, UserService } from './app/core/services/user.service';
 
+import { TranslateModule } from '@ngx-translate/core';
+import { LanguageService } from './app/core/services/language.service';
+
 @Component({
     selector: 'app-root',
     standalone: true,
@@ -21,6 +24,7 @@ import { UserProfile, UserService } from './app/core/services/user.service';
         MatTooltipModule,
         MatMenuModule,
         MatDividerModule,
+        TranslateModule,
     ],
     templateUrl: './app.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -31,11 +35,13 @@ export class AppComponent implements OnInit {
     protected isChatRoute = signal(false);
 
     protected get isDarkMode() { return this.themeService.isDarkMode; }
+    protected get currentLang() { return this.languageService.currentLang; }
 
     constructor(
         public themeService: ThemeService,
         private userService: UserService,
-        private router: Router
+        private router: Router,
+        private languageService: LanguageService
     ) {}
 
     ngOnInit() {
@@ -51,6 +57,14 @@ export class AppComponent implements OnInit {
 
     protected toggleTheme() {
         this.themeService.toggleTheme();
+    }
+
+    protected toggleLanguage() {
+        this.languageService.toggleLanguage();
+    }
+
+    protected setLanguage(lang: string) {
+        this.languageService.setLanguage(lang);
     }
 
     protected readonly document = document;

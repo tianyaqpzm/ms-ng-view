@@ -1,0 +1,55 @@
+{
+  "APP": {
+    "NAME": "Timekeeper AI",
+    "BRAND": "Timekeeper"
+  },
+  "SIDEBAR": {
+    "RECENT": "最近记录",
+    "NEW_CHAT": "开启新对话",
+    "NEW_CONVERSATION": "新会话",
+    "LIGHT_MODE": "亮色模式",
+    "DARK_MODE": "暗黑模式",
+    "SETTINGS": "设置"
+  },
+  "CHAT": {
+    "WELCOME": "你好，旅行者",
+    "SUBTITLE": "今天我可以如何帮助你管理时间？",
+    "PLACEHOLDER": "问我任何问题...",
+    "DISCLAIMER": "Timekeeper AI 可能会显示不准确的信息，请核实其回答。",
+    "RETRY": "响应失败，点击重发",
+    "EDIT": "修改此问题",
+    "COPY_TEXT": "复制文本",
+    "COPY_RESPONSE": "复制回答",
+    "RATE_GOOD": "答得好",
+    "RATE_BAD": "答得不好",
+    "REGENERATE": "重做",
+    "EXPORT": "导出",
+    "UPLOAD_FILE": "上传文件",
+    "TAKE_PHOTO": "拍照",
+    "ATTACH_FILE": "添加文件或图片",
+    "SELECT_KB": "选择知识库 (RAG)",
+    "NO_KB": "不使用知识库",
+    "KNOWLEDGE_BASE": "知识库"
+  },
+  "THEME": {
+    "SWITCH_TO_LIGHT": "切换到亮色模式",
+    "SWITCH_To_DARK": "切换到暗黑模式"
+  },
+  "USER": {
+    "PROFILE_SETTINGS": "个人偏好设置",
+    "ACCOUNT_MGMT": "账号管理 (Cardoor)",
+    "LOGOUT": "安全退出",
+    "IDENTITY": "Cardoor 身份"
+  },
+  "SETTINGS_DIALOG": {
+    "TITLE": "个人偏好设置",
+    "APPEARANCE": "外观界面",
+    "DARK_MODE": "深色模式",
+    "INTERACTION": "交互体验",
+    "ENTER_TO_SEND": "回车键发送消息",
+    "ENTER_TO_SEND_HINT": "开启后，按 Enter 发送，Ctrl+Enter 换行；关闭后则相反。",
+    "AI_PREFERENCE": "AI 偏好",
+    "STREAM_ANIMATION": "开启流式输出动画",
+    "DONE": "完成"
+  }
+}
