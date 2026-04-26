@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -37,7 +38,8 @@ interface ChatSessionDto {
         MatTooltipModule,
         MatMenuModule,
         MatDividerModule,
-        MatDialogModule
+        MatDialogModule,
+        TranslateModule
     ],
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
@@ -76,7 +78,8 @@ export class ChatComponent {
         private userService: UserService,
         public themeService: ThemeService,
         private authService: AuthService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private translate: TranslateService
     ) {
         this.initSession();
         this.loadTopics();
@@ -467,7 +470,7 @@ export class ChatComponent {
                     const newMsgs = [...msgs];
                     // Remove the empty AI message on error or show error text
                     if (newMsgs[aiMsgIndex]) {
-                        newMsgs[aiMsgIndex] = { ...newMsgs[aiMsgIndex], content: 'Error: Could not reach the agent. Please check connection.' };
+                        newMsgs[aiMsgIndex] = { ...newMsgs[aiMsgIndex], content: 'Error: ' + this.translate.instant('CHAT.RETRY') };
                     }
                     return newMsgs;
                 });

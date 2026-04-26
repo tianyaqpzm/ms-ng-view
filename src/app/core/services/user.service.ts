@@ -22,7 +22,10 @@ export class UserService {
      */
     async initialize(): Promise<void> {
         // 1. 如果 URL 里携带了 token，先提取并保存
-        this.authService.extractTokenFromUrl();
+        const extracted = this.authService.extractTokenFromUrl();
+        if (extracted) {
+            console.log('【UserService】Token extracted during initialization');
+        }
 
         // 2. 如果本地有 token，尝试获取用户信息
         if (this.authService.hasToken()) {

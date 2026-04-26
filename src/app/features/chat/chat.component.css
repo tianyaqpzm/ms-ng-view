@@ -63,11 +63,14 @@
 }
 
 @keyframes geminiStepPulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(0.8);
         opacity: 0.4;
         background-position: 0% 50%;
     }
+
     50% {
         transform: scale(1.4);
         opacity: 1;
@@ -76,7 +79,7 @@
 }
 
 /* Response Action Icons */
-.mat-icon-button.!w-8.!h-8 {
+.mat-icon-button.\!w-8.\!h-8 {
     line-height: 32px;
 }
 

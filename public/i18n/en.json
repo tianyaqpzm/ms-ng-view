@@ -1,0 +1,55 @@
+{
+  "APP": {
+    "NAME": "Timekeeper AI",
+    "BRAND": "Timekeeper"
+  },
+  "SIDEBAR": {
+    "RECENT": "Recent",
+    "NEW_CHAT": "New Chat",
+    "NEW_CONVERSATION": "New Conversation",
+    "LIGHT_MODE": "Light Mode",
+    "DARK_MODE": "Dark Mode",
+    "SETTINGS": "Settings"
+  },
+  "CHAT": {
+    "WELCOME": "Hello, Traveler",
+    "SUBTITLE": "How can I help you manage your time today?",
+    "PLACEHOLDER": "Ask anything...",
+    "DISCLAIMER": "Timekeeper AI may display inaccurate info, including about people, so double-check its responses.",
+    "RETRY": "Response failed, click to retry",
+    "EDIT": "Edit this question",
+    "COPY_TEXT": "Copy text",
+    "COPY_RESPONSE": "Copy response",
+    "RATE_GOOD": "Good response",
+    "RATE_BAD": "Bad response",
+    "REGENERATE": "Regenerate",
+    "EXPORT": "Export",
+    "UPLOAD_FILE": "Upload File",
+    "TAKE_PHOTO": "Take Photo",
+    "ATTACH_FILE": "Add file or photo",
+    "SELECT_KB": "Select Knowledge Base (RAG)",
+    "NO_KB": "No Knowledge Base",
+    "KNOWLEDGE_BASE": "Knowledge Base"
+  },
+  "THEME": {
+    "SWITCH_TO_LIGHT": "Switch to light mode",
+    "SWITCH_TO_DARK": "Switch to dark mode"
+  },
+  "USER": {
+    "PROFILE_SETTINGS": "Profile Settings",
+    "ACCOUNT_MGMT": "Account Management (Cardoor)",
+    "LOGOUT": "Logout",
+    "IDENTITY": "Cardoor Identity"
+  },
+  "SETTINGS_DIALOG": {
+    "TITLE": "Profile Settings",
+    "APPEARANCE": "Appearance",
+    "DARK_MODE": "Dark Mode",
+    "INTERACTION": "Interaction",
+    "ENTER_TO_SEND": "Enter to send message",
+    "ENTER_TO_SEND_HINT": "When enabled, Enter sends and Ctrl+Enter adds a new line; otherwise it's reversed.",
+    "AI_PREFERENCE": "AI Preference",
+    "STREAM_ANIMATION": "Enable streaming output animation",
+    "DONE": "Done"
+  }
+}

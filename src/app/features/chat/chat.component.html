@@ -4,16 +4,17 @@
     <!-- Global Backdrop (Overlay) -->
     <div *ngIf="isSidebarOpen()" 
          (click)="toggleSidebar()"
-         class="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 animate-fade-in backdrop-blur-[2px]">
+         class="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 animate-fade-in backdrop-blur-[2px] md:hidden">
     </div>
 
     <!-- Unified Sidebar Drawer -->
     <aside
-        class="fixed h-full z-50 flex-shrink-0 bg-gray-50 dark:bg-[#1e1f20] transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-[#444746] shadow-2xl"
+        class="fixed md:relative h-full z-50 flex-shrink-0 bg-gray-50 dark:bg-[#1e1f20] transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-[#444746] shadow-2xl md:shadow-none"
         [class.w-72]="isSidebarOpen()" 
         [class.w-0]="!isSidebarOpen()" 
         [class.-translate-x-full]="!isSidebarOpen()"
         [class.translate-x-0]="isSidebarOpen()"
+        [class.md:translate-x-0]="true"
         [class.overflow-hidden]="!isSidebarOpen()">
         
         <div class="p-4 h-full flex flex-col w-72">
@@ -33,9 +34,9 @@
             <div class="flex-1 overflow-y-auto space-y-2">
                 <div
                     class="px-3 py-2 text-xs font-medium text-gray-500 dark:text-[#8e918f] uppercase tracking-wider flex justify-between items-center">
-                    Recent
+                    {{ 'SIDEBAR.RECENT' | translate }}
                     <button (click)="createNewSession()" class="text-primary hover:text-primary-dark transition-colors"
-                        title="New Chat">
+                        [title]="'SIDEBAR.NEW_CHAT' | translate">
                         <mat-icon class="text-[16px] w-4 h-4">add</mat-icon>
                     </button>
                 </div>
@@ -48,7 +49,7 @@
                     [class.text-gray-900]="session.sessionId === activeSessionId()"
                     class="w-full text-left px-3 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#333537] text-sm/5 truncate text-gray-700 dark:text-[#e3e3e3] transition-colors flex items-center gap-3 group">
                     <mat-icon class="text-base/4 w-4 h-4 !text-[18px]">chat_bubble_outline</mat-icon>
-                    <span class="truncate" [title]="session.title">{{ session.title || 'New Conversation' }}</span>
+                    <span class="truncate" [title]="session.title">{{ session.title || ('SIDEBAR.NEW_CONVERSATION' | translate) }}</span>
                 </button>
                 }
             </div>
@@ -59,13 +60,13 @@
                     class="w-full text-left px-3 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#333537] text-sm text-gray-700 dark:text-[#e3e3e3] flex items-center gap-3 transition-colors">
                     <mat-icon class="text-base/4 w-4 h-4 !text-[18px]">{{ isDarkMode() ? 'light_mode' : 'dark_mode'
                         }}</mat-icon>
-                    {{ isDarkMode() ? 'Light Mode' : 'Dark Mode' }}
+                    {{ (isDarkMode() ? 'SIDEBAR.LIGHT_MODE' : 'SIDEBAR.DARK_MODE') | translate }}
                 </button>
 
                 <button
                     class="w-full text-left px-3 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#333537] text-sm text-gray-700 dark:text-[#e3e3e3] flex items-center gap-3 transition-colors">
                     <mat-icon class="text-base/4 w-4 h-4 !text-[18px]">settings</mat-icon>
-                    Settings
+                    {{ 'SIDEBAR.SETTINGS' | translate }}
                 </button>
             </div>
         </div>
@@ -112,21 +113,20 @@
                         }
                         <span class="text-sm font-semibold text-gray-900 dark:text-[#e3e3e3] truncate max-w-full">{{
                             currentUser()!.name }}</span>
-                        <span class="text-xs text-gray-500 dark:text-[#8e918f] truncate max-w-full">Cardoor
-                            Identity</span>
+                        <span class="text-xs text-gray-500 dark:text-[#8e918f] truncate max-w-full">{{ 'USER.IDENTITY' | translate }}</span>
                     </div>
                     <button mat-menu-item (click)="openSettings()">
                         <mat-icon class="text-gray-500">settings</mat-icon>
-                        <span>个人偏好设置</span>
+                        <span>{{ 'USER.PROFILE_SETTINGS' | translate }}</span>
                     </button>
                     <button mat-menu-item (click)="openAccountManagement()">
                         <mat-icon class="text-gray-500">account_circle</mat-icon>
-                        <span>账号管理 (Cardoor)</span>
+                        <span>{{ 'USER.ACCOUNT_MGMT' | translate }}</span>
                     </button>
                     <mat-divider></mat-divider>
                     <button mat-menu-item class="!text-red-500" (click)="logout()">
                         <mat-icon class="!text-red-500">exit_to_app</mat-icon>
-                        <span>安全退出</span>
+                        <span>{{ 'USER.LOGOUT' | translate }}</span>
                     </button>
                 </mat-menu>
                 }
@@ -146,8 +146,8 @@
                     </div>
                     <h1
                         class="text-4xl md:text-5xl font-medium bg-gradient-to-r from-[#4285f4] via-[#9b72cb] to-[#d96570] bg-clip-text text-transparent">
-                        Hello, Traveler</h1>
-                    <p class="text-xl text-gray-500 dark:text-[#c4c7c5]">How can I help you manage your time today?</p>
+                        {{ 'CHAT.WELCOME' | translate }}</h1>
+                    <p class="text-xl text-gray-500 dark:text-[#c4c7c5]">{{ 'CHAT.SUBTITLE' | translate }}</p>
                 </div>
                 }
 
@@ -172,7 +172,7 @@
                             <!-- Failed Retry icon -->
                             @if (isResponseFailed($index)) {
                             <button mat-icon-button class="!w-8 !h-8 text-red-500 hover:text-red-700 transition-colors"
-                                (click)="retryMessage($index)" matTooltip="响应失败，点击重发">
+                                (click)="retryMessage($index)" [matTooltip]="'CHAT.RETRY' | translate">
                                 <mat-icon class="!text-[16px] w-4 h-4 leading-[16px]">refresh</mat-icon>
                             </button>
                             }
@@ -180,14 +180,14 @@
                             @if (isLastUserMessage($index)) {
                             <button mat-icon-button
                                 class="!w-8 !h-8 text-gray-500 dark:text-[#c4c7c5] hover:text-primary transition-colors"
-                                (click)="editMessage($index)" matTooltip="修改此问题">
+                                (click)="editMessage($index)" [matTooltip]="'CHAT.EDIT' | translate">
                                 <mat-icon class="!text-[16px] w-4 h-4 leading-[16px]">edit</mat-icon>
                             </button>
                             }
                             <!-- Copy icon -->
                             <button mat-icon-button
                                 class="!w-8 !h-8 text-gray-500 dark:text-[#c4c7c5] hover:text-gray-900 dark:hover:text-white transition-colors"
-                                (click)="copyText(msg.content)" matTooltip="复制文本">
+                                (click)="copyText(msg.content)" [matTooltip]="'CHAT.COPY_TEXT' | translate">
                                 <mat-icon class="!text-[16px] w-4 h-4 leading-[16px]">content_copy</mat-icon>
                             </button>
                         </div>
@@ -215,24 +215,24 @@
                             <div *ngIf="msg.content" class="flex items-center gap-0.5 mt-1 -ml-2 opacity-0 group-hover/msg:opacity-100 transition-opacity duration-200">
                                 <button mat-icon-button (click)="rateResponse($index, 'good')" 
                                     [class.text-blue-500]="responseRatings().get($index) === 'good'"
-                                    class="!w-8 !h-8 text-gray-400 hover:text-blue-500 transition-colors" matTooltip="答的好">
+                                    class="!w-8 !h-8 text-gray-400 hover:text-blue-500 transition-colors" [matTooltip]="'CHAT.RATE_GOOD' | translate">
                                     <mat-icon class="!text-[18px] w-4.5 h-4.5 leading-[18px]">thumb_up_off_alt</mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="rateResponse($index, 'bad')"
                                     [class.text-red-500]="responseRatings().get($index) === 'bad'"
-                                    class="!w-8 !h-8 text-gray-400 hover:text-red-500 transition-colors" matTooltip="答的不好">
+                                    class="!w-8 !h-8 text-gray-400 hover:text-red-500 transition-colors" [matTooltip]="'CHAT.RATE_BAD' | translate">
                                     <mat-icon class="!text-[18px] w-4.5 h-4.5 leading-[18px]">thumb_down_off_alt</mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="copyText(msg.content)"
-                                    class="!w-8 !h-8 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" matTooltip="复制回答">
+                                    class="!w-8 !h-8 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" [matTooltip]="'CHAT.COPY_RESPONSE' | translate">
                                     <mat-icon class="!text-[18px] w-4.5 h-4.5 leading-[18px]">content_copy</mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="regenerateResponse($index)"
-                                    class="!w-8 !h-8 text-gray-400 hover:text-primary transition-colors" matTooltip="重做">
+                                    class="!w-8 !h-8 text-gray-400 hover:text-primary transition-colors" [matTooltip]="'CHAT.REGENERATE' | translate">
                                     <mat-icon class="!text-[18px] w-4.5 h-4.5 leading-[18px]">refresh</mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="exportResponse($index)"
-                                    class="!w-8 !h-8 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" matTooltip="导出">
+                                    class="!text-[18px] !w-8 !h-8 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" [matTooltip]="'CHAT.EXPORT' | translate">
                                     <mat-icon class="!text-[18px] w-4.5 h-4.5 leading-[18px]">download</mat-icon>
                                 </button>
                             </div>
@@ -277,7 +277,7 @@
                     <!-- Menu Trigger -->
                     <button mat-icon-button [matMenuTriggerFor]="uploadMenu"
                         class="text-gray-500 dark:text-[#c4c7c5] hover:text-gray-900 dark:hover:text-[#e3e3e3] mb-1 ml-1"
-                        matTooltip="Add file or photo">
+                        [matTooltip]="'CHAT.ATTACH_FILE' | translate">
                         <mat-icon>add_circle</mat-icon>
                     </button>
 
@@ -292,7 +292,7 @@
                     <mat-menu #kbMenu="matMenu">
                         <button mat-menu-item (click)="selectTopic(null)">
                             <mat-icon>do_not_disturb_alt</mat-icon>
-                            <span>不使用知识库</span>
+                            <span>{{ 'CHAT.NO_KB' | translate }}</span>
                         </button>
                         <mat-divider></mat-divider>
                         @for (topic of topics(); track topic.id) {
@@ -307,11 +307,11 @@
                     <mat-menu #uploadMenu="matMenu">
                         <button mat-menu-item (click)="fileInput.click()">
                             <mat-icon>upload_file</mat-icon>
-                            <span>Upload File</span>
+                            <span>{{ 'CHAT.UPLOAD_FILE' | translate }}</span>
                         </button>
                         <button mat-menu-item (click)="openCamera()">
                             <mat-icon>photo_camera</mat-icon>
-                            <span>Take Photo</span>
+                            <span>{{ 'CHAT.TAKE_PHOTO' | translate }}</span>
                         </button>
                     </mat-menu>
 
@@ -330,7 +330,7 @@
                     }
 
                     <textarea [(ngModel)]="userInput" (keydown.enter)="$event.preventDefault(); sendMessage()"
-                        placeholder="Ask anything..."
+                        [placeholder]="'CHAT.PLACEHOLDER' | translate"
                         class="w-full bg-transparent border-none text-gray-900 dark:text-[#e3e3e3] placeholder-gray-500 dark:placeholder-[#8e918f] resize-none py-3 px-2 max-h-32 focus:ring-0 text-base custom-scrollbar"
                         rows="1" style="min-height: 48px;" #inputField></textarea>
 
@@ -351,7 +351,7 @@
                     </div>
                 </div>
                 <div class="text-center mt-2 text-xs text-gray-500 dark:text-[#8e918f]">
-                    Timekeeper AI may display inaccurate info, including about people, so double-check its responses.
+                    {{ 'CHAT.DISCLAIMER' | translate }}
                 </div>
             </div>
         </div>
