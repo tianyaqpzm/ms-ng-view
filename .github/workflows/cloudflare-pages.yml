@@ -30,7 +30,7 @@ jobs:
         run: npm ci
 
       - name: Run Tests
-        run: npm test -- --watchAll=false
+        run: npm test -- --watch=false
 
       # 构建 Angular 项目
       - name: Build Angular App
