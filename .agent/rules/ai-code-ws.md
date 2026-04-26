@@ -39,5 +39,14 @@ trigger: always_on
 4. **认证处理 (Authentication)**:
    - **Token 提取**: 兼容 `HashLocationStrategy`。从 URL 提取 Token 时，必须同时检查标准查询参数 (`window.location.search`) 和资源标识符后的参数 (`window.location.hash` 里的 `?token=`)，防止在路由跳转过程中丢失参数。
 
+5. **项目维护与测试 (Maintenance & Testing)**:
+   - **Angular 版本一致性**: 升级时必须严格对齐 `@angular/*` 核心包版本（如 `21.2.10`）。周边包（`material`, `cli`）需检查 Registry 匹配版本（如 `21.2.8`）。
+   - **Jest Builder 配置**: 使用 `@angular-builders/jest:run` 代替旧版的 `:jest`。配置文件项必须使用 `config` 而非 `jestConfig`。
+   - **ESM 兼容性**: 在 `type: module` 项目中，Jest 配置文件应使用 `.js` 后缀并导出为 ESM 对象，避免 Node.js 加载 `.ts` 配置时的后缀名报错。
+   - **自动化初始化**: 现代 Jest Builder 默认处理 `TestBed` 初始化。除非有特殊需求且关闭了 `zoneless` 模式，否则禁止在 `setup-jest.ts` 中手动调用 `setupZoneTestEnv()`。
+
+6. **样式规范 (Styling Standards)**:
+   - **选择器转义**: 在 CSS 文件中直接引用 Tailwind 的重要性修饰符时，**必须**对 `!` 进行转义（例如使用 `.\!w-8` 而非 `.!w-8`），否则会导致编译器解析错误。
+
 # Key Context (关键背景)
 前端直接与网关交互。它需要展示实时的 AI 对话流，并提供一个管理后台让用户配置和开关各种 MCP 插件。
