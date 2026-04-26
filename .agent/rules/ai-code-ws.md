@@ -29,5 +29,8 @@ trigger: always_on
    - **动态表单生成**: 根据后端 API 返回的 JSON Schema，动态渲染插件配置表单（例如让用户填 API Key）。
    - 安全地处理敏感数据（如 API Key），确保通过 HTTPS 传输。
 
+4. **认证处理 (Authentication)**:
+   - **Token 提取**: 兼容 `HashLocationStrategy`。从 URL 提取 Token 时，必须同时检查标准查询参数 (`window.location.search`) 和资源标识符后的参数 (`window.location.hash` 里的 `?token=`)，防止在路由跳转过程中丢失参数。
+
 # Key Context (关键背景)
 前端直接与网关交互。它需要展示实时的 AI 对话流，并提供一个管理后台让用户配置和开关各种 MCP 插件。

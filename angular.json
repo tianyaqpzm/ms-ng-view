@@ -65,6 +65,14 @@
             }
           },
           "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular-builders/jest:jest",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "jestConfig": "jest.config.ts",
+            "passWithNoTests": true
+          }
         }
       }
     }

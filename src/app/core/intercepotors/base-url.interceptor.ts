@@ -4,13 +4,21 @@ import { inject } from '@angular/core';
 import { EMPTY, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
+import { DOCUMENT } from '@angular/common';
 
 export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
+    const document = inject(DOCUMENT);
+    const window = document.defaultView;
     const baseUrl = environment.VITE_API_URL;
 
     // 1. 获取本地 Token
     const token = authService.getToken();
+    if (token) {
+        console.log('【Interceptor】Token found, injecting Authorization header');
+    } else {
+        console.warn('【Interceptor】No token found for request:', req.url);
+    }
 
     // 2. 克隆请求，注入 BaseURL 并添加 Authorization Header
     let apiReq = req;
@@ -43,14 +51,16 @@ export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
                 // 清除本地失效 Token
                 authService.removeToken();
 
-                const currentUrl = encodeURIComponent(window.location.href);
-                if (error.error && error.error.url) {
-                    const authBaseUrl = environment.VITE_GATEWAY_URL;
-                    window.location.href = authBaseUrl + error.error.url + "?redirect=" + currentUrl;
-                } else {
-                    // 兜底跳转
-                    const authBaseUrl = environment.VITE_GATEWAY_URL;
-                    window.location.href = `${authBaseUrl}/oauth2/authorization/casdoor?redirect=${currentUrl}`;
+                if (window) {
+                    const currentUrl = encodeURIComponent(window.location.href);
+                    if (error.error && error.error.url) {
+                        const authBaseUrl = environment.VITE_GATEWAY_URL;
+                        window.location.href = authBaseUrl + error.error.url + "?redirect=" + currentUrl;
+                    } else {
+                        // 兜底跳转
+                        const authBaseUrl = environment.VITE_GATEWAY_URL;
+                        window.location.href = `${authBaseUrl}/oauth2/authorization/casdoor?redirect=${currentUrl}`;
+                    }
                 }
             }
             return throwError(() => error);

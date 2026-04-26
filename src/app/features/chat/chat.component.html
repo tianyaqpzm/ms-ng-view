@@ -4,16 +4,17 @@
     <!-- Global Backdrop (Overlay) -->
     <div *ngIf="isSidebarOpen()" 
          (click)="toggleSidebar()"
-         class="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 animate-fade-in backdrop-blur-[2px]">
+         class="fixed inset-0 bg-black/40 dark:bg-black/60 z-40 animate-fade-in backdrop-blur-[2px] md:hidden">
     </div>
 
     <!-- Unified Sidebar Drawer -->
     <aside
-        class="fixed h-full z-50 flex-shrink-0 bg-gray-50 dark:bg-[#1e1f20] transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-[#444746] shadow-2xl"
+        class="fixed md:relative h-full z-50 flex-shrink-0 bg-gray-50 dark:bg-[#1e1f20] transition-all duration-300 ease-in-out border-r border-gray-200 dark:border-[#444746] shadow-2xl md:shadow-none"
         [class.w-72]="isSidebarOpen()" 
         [class.w-0]="!isSidebarOpen()" 
         [class.-translate-x-full]="!isSidebarOpen()"
         [class.translate-x-0]="isSidebarOpen()"
+        [class.md:translate-x-0]="true"
         [class.overflow-hidden]="!isSidebarOpen()">
         
         <div class="p-4 h-full flex flex-col w-72">
