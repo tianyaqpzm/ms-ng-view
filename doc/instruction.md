@@ -18,7 +18,7 @@ graph TD
     %% 网关层 (Spring Cloud Gateway)
     %% ==========================================
     subgraph "接入层 (DMZ)"
-        Gateway["API Gateway\n(Spring Cloud Gateway + WebFlux)"]
+        Gateway["ms-java-gateway\n(Spring Cloud Gateway + WebFlux)"]
         style Gateway fill:#f3e5f5,stroke:#4a148c
     end
 
@@ -39,7 +39,7 @@ graph TD
         style JavaApp fill:#e8f5e9,stroke:#1b5e20
         
         %% Python 服务
-        PythonApp["Python Agent 服务\n(FastAPI + LangGraph)\n职责：复杂推理, 编排"]
+        PythonApp["ms-py-agent 服务\n(FastAPI + LangGraph)\n职责：复杂推理, 编排"]
         style PythonApp fill:#fff3e0,stroke:#e65100
         
         %% 互通
@@ -87,7 +87,7 @@ graph TD
     classDef gateway fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
     classDef ext fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
 
-    User((用户)) -->|HTTPS| Ingress[(API Gateway
+    User((用户)) -->|HTTPS| Ingress[(ms-java-gateway
     入口网关)]:::gateway
     
     subgraph "核心业务域 (Private Cloud)"
@@ -104,7 +104,7 @@ graph TD
     end
 
     subgraph "大模型服务域"
-        Agent -->|构建 Prompt| Proxy[(API Gateway\n出口代理/审计)]:::gateway
+        Agent -->|构建 Prompt| Proxy[(ms-java-gateway\n出口代理/审计)]:::gateway
         Proxy -->|鉴权 & 流控| LLM(大语言模型\nOpenAI / DeepSeek):::ext
     end
 ```
