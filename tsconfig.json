@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "ES2022",
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
@@ -11,6 +12,7 @@
     ],
     "skipLibCheck": true,
     "types": [
+      "jest",
       "node"
     ],
     "moduleResolution": "bundler",
@@ -20,12 +22,15 @@
     "jsx": "react-jsx",
     "paths": {
       "@/*": [
-        "./*"
+        "src/*"
       ]
     }
   },
-  "files": [
-    "./main.ts"
+  "include": [
+    "main.ts",
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "tests/**/*.spec.ts"
   ],
   "angularCompilerOptions": {
     "disableTypeScriptVersionCheck": true

@@ -27,7 +27,7 @@ export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
         headers['Authorization'] = `Bearer ${token}`;
     }
 
-    if (!req.url.startsWith('http') && !req.url.startsWith('/assets')) {
+    if (req.url.startsWith('/') && !req.url.startsWith('/assets')) {
         apiReq = req.clone({
             url: `${baseUrl}${req.url}`,
             setHeaders: headers

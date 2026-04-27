@@ -1,8 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { AuthService } from '@/app/core/services/auth.service';
+import { UserProfile, UserService } from '@/app/core/services/user.service';
 import { HttpClient } from '@angular/common/http';
+import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { UserService, UserProfile } from '@/src/app/core/services/user.service';
-import { AuthService } from '@/src/app/core/services/auth.service';
 
 describe('UserService (TU-01 ~ TU-03)', () => {
     let service: UserService;
@@ -57,7 +57,7 @@ describe('UserService (TU-01 ~ TU-03)', () => {
     });
 
     it('initialize should remove token if user fetch fails (TU-03)', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
         (authService.hasToken as jest.Mock).mockReturnValue(true);
         (http.get as jest.Mock).mockReturnValue(throwError(() => new Error('401')));
 

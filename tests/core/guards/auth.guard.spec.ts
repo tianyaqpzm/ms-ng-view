@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-import { AuthService } from '@/src/app/core/services/auth.service';
-import { authGuard } from '@/src/app/core/guards/auth.guard';
+import { AuthService } from '@/app/core/services/auth.service';
+import { authGuard } from '@/app/core/guards/auth.guard';
 import { environment } from '@/environments/environment';
 
 describe('authGuard (TA-03)', () => {

@@ -2,8 +2,8 @@ import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { environment } from '@/environments/environment';
-import { AuthService } from '@/src/app/core/services/auth.service';
-import { apiUrlInterceptor } from '@/src/app/core/intercepotors/base-url.interceptor';
+import { AuthService } from '@/app/core/services/auth.service';
+import { apiUrlInterceptor } from '@/app/core/interceptors/base-url.interceptor';
 import { DOCUMENT } from '@angular/common';
 
 describe('apiUrlInterceptor (TI-01 ~ TI-03)', () => {
