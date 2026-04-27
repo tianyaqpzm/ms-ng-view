@@ -30,7 +30,7 @@ import { LanguageService } from './app/core/services/language.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-    protected get currentUser() { return this.userService.currentUser(); }
+    protected get currentUser() { return this.userService.currentUser; }
     /** 当前路由是否为 chat 页面（chat 页面自带 profile UI，全局顶栏隐藏） */
     protected isChatRoute = signal(false);
 

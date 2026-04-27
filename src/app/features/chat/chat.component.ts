@@ -60,7 +60,7 @@ export class ChatComponent {
 
     protected activeSessionId = signal<string>('');
     protected chatSessions = signal<ChatSessionDto[]>([]);
-    protected currentUser = signal<UserProfile | null>(null);
+    protected get currentUser() { return this.userService.currentUser; }
 
     private mediaStream: MediaStream | null = null;
     private cameraStream: MediaStream | null = null;
@@ -83,17 +83,6 @@ export class ChatComponent {
     ) {
         this.initSession();
         this.loadTopics();
-        this.loadProfile();
-    }
-
-
-    private async loadProfile() {
-        try {
-            const user = await this.userService.getCurrentUser();
-            this.currentUser.set(user);
-        } catch(e) {
-            console.error('No valid user bound');
-        }
     }
 
     private async loadTopics() {
