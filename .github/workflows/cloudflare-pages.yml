@@ -49,8 +49,8 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           # 根据 angular.json 配置，构建输出在 dist 目录
-          # 项目名称：timekeeper 
+          # 项目名称：ms-ng-view 
           # 动态传入 --branch=${{ github.ref_name }}
           # 如果是 master，CF 会发布到正式环境
-          # 如果是 dev，CF 会发布到 dev.timekeeper.pages.dev (测试环境)
-          command: pages deploy dist --project-name=timekeeper --branch=${{ github.ref_name }}
+          # 如果是 dev，CF 会发布到 dev.ms-ng-view.pages.dev (测试环境)
+          command: pages deploy dist --project-name=ms-ng-view --branch=${{ github.ref_name }}

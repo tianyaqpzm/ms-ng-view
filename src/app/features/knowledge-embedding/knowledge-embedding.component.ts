@@ -114,7 +114,7 @@ export class KnowledgeEmbeddingComponent implements OnInit {
       this.buildLogs.update(logs => [...logs, `系统返回: ${JSON.stringify(res).substring(0, 100)}...`, '索引构建完成。检索策略已生效！']);
     } catch (e: any) {
       this.buildProgress.set(100);
-      this.buildLogs.update(logs => [...logs, `[ERROR] 任务失败: ${e.message}`, '请检查 Python Agent 是否在线']);
+      this.buildLogs.update(logs => [...logs, `[ERROR] 任务失败: ${e.message}`, '请检查 ms-py-agent 是否在线']);
     } finally {
       setTimeout(() => {
         this.isBuilding.set(false);

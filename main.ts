@@ -7,7 +7,7 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 
 import { AppComponent } from './src/app.component';
 import { routes } from './src/app.routes';
-import { apiUrlInterceptor } from './src/app/core/intercepotors/base-url.interceptor';
+import { apiUrlInterceptor } from './src/app/core/interceptors/base-url.interceptor';
 import { UserService } from './src/app/core/services/user.service';
 import { provideI18n } from './src/app/core/configs/i18n.config';
 

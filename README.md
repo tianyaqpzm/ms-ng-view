@@ -2,7 +2,7 @@
 <img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
 </div>
 
-# TimeKeeper - AI Studio Time Management App
+# ms-ng-view - AI Studio Time Management App
 
 A beautiful and intuitive countdown timer application built with Angular and Material Design.
 
@@ -69,7 +69,7 @@ This project supports two deployment options:
    ```
 
 3. **Access your site**:
-   - URL: `https://timekeeper.pages.dev`
+   - URL: `https://ms-ng-view.pages.dev`
    - Custom domain: Configure in Cloudflare Dashboard
 
 📖 **Detailed Guide**: [Cloudflare Pages 部署指南](.github/CLOUDFLARE_PAGES.md)
@@ -102,13 +102,13 @@ Use the provided setup script on your server:
 
 ```bash
 # Download the script
-wget https://raw.githubusercontent.com/YOUR_USERNAME/timekeeper/main/.github/setup-server.sh
+wget https://raw.githubusercontent.com/YOUR_USERNAME/ms-ng-view/main/.github/setup-server.sh
 
 # Make it executable
 chmod +x setup-server.sh
 
 # Run with custom configuration
-sudo DEPLOY_USER=deploy DEPLOY_PATH=/var/www/timekeeper DOMAIN=your-domain.com bash setup-server.sh
+sudo DEPLOY_USER=deploy DEPLOY_PATH=/var/www/ms-ng-view DOMAIN=your-domain.com bash setup-server.sh
 ```
 
 ## 🛠️ Tech Stack
@@ -123,7 +123,7 @@ sudo DEPLOY_USER=deploy DEPLOY_PATH=/var/www/timekeeper DOMAIN=your-domain.com b
 ## 📂 Project Structure
 
 ```
-timekeeper/
+ms-ng-view/
 ├── src/
 │   ├── app/
 │   │   ├── core/           # Core services and utilities

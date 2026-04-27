@@ -31,6 +31,7 @@ trigger: always_on
    - 异步操作严禁使用已弃用的 `.toPromise()`。必须使用 `firstValueFrom` 或 `lastValueFrom`。
    - 对于普通的接口请求，首选 `firstValueFrom(this.http.get(...))` 或者基于 RxJS 的异步管道处理。
    - 对于 SSE（Server-Sent Events）接口的流读取，应该使用 `this.http.post(..., { observe: 'events', reportProgress: true, responseType: 'text' })` 配合 `next()` 回调进行分段数据读取。
+   - **拦截器范围控制**: `apiUrlInterceptor` 必须仅拦截以 `/` 开头的 API 请求。严禁拦截以 `./` 开头的相对路径请求（如 i18n 资源），以防止误拼接 `VITE_API_URL` 导致资源加载失败。
 
 3. **插件管理 UI**:
    - **动态表单生成**: 根据后端 API 返回的 JSON Schema，动态渲染插件配置表单（例如让用户填 API Key）。
@@ -44,9 +45,10 @@ trigger: always_on
    - **Jest Builder 配置**: 使用 `@angular-builders/jest:run` 代替旧版的 `:jest`。配置文件项必须使用 `config` 而非 `jestConfig`。
    - **ESM 兼容性**: 在 `type: module` 项目中，Jest 配置文件应使用 `.js` 后缀并导出为 ESM 对象，避免 Node.js 加载 `.ts` 配置时的后缀名报错。
    - **自动化初始化**: 现代 Jest Builder 默认处理 `TestBed` 初始化。除非有特殊需求且关闭了 `zoneless` 模式，否则禁止在 `setup-jest.ts` 中手动调用 `setupZoneTestEnv()`。
+   - **目录规范**: 核心逻辑必须存放在 `src/app/core/` 下。拦截器目录必须命名为 `interceptors`（严禁拼写为 `intercepotors`）。
 
 6. **样式规范 (Styling Standards)**:
    - **选择器转义**: 在 CSS 文件中直接引用 Tailwind 的重要性修饰符时，**必须**对 `!` 进行转义（例如使用 `.\!w-8` 而非 `.!w-8`），否则会导致编译器解析错误。
 
 # Key Context (关键背景)
-前端直接与网关交互。它需要展示实时的 AI 对话流，并提供一个管理后台让用户配置和开关各种 MCP 插件。
+前端服务 (`ms-ng-view`) 直接与网关 (`ms-java-gateway`) 交互。负责页面渲染、数据可视化与用户交互逻辑，将用户操作转化为标准化请求发往网关。支持流式对话展示与插件动态管理。
