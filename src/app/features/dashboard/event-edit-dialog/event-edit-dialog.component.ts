@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 
-import { TimeLimitedEvent } from '../../../core/services/event.service';
+import { TimeLimitedEvent } from '../../../core/domain/event/event.model';
 
 @Component({
     selector: 'app-event-edit-dialog',

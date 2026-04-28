@@ -17,19 +17,17 @@
     <!-- Tabs -->
     <div class="px-5 pt-2 pb-4 bg-background-dark z-10 border-b border-gray-800/50">
       <div class="flex gap-6 overflow-x-auto no-scrollbar">
-        <button class="flex flex-col items-center group">
-          <span class="text-white text-sm font-bold pb-2">All</span>
-          <span class="w-full h-0.5 bg-primary rounded-full"></span>
+        <button (click)="selectCategory(null)" class="flex flex-col items-center group">
+          <span class="text-sm font-bold pb-2" [ngClass]="useCase.selectedCategory() === null ? 'text-white' : 'text-gray-400 group-hover:text-white transition-colors'">All</span>
+          <span class="w-full h-0.5 rounded-full" [ngClass]="useCase.selectedCategory() === null ? 'bg-primary' : 'bg-transparent group-hover:bg-gray-700 transition-colors'"></span>
         </button>
-        <button class="flex flex-col items-center group">
-          <span
-            class="text-gray-400 group-hover:text-white transition-colors text-sm font-semibold pb-2">Birthdays</span>
-          <span class="w-full h-0.5 bg-transparent group-hover:bg-gray-700 transition-colors rounded-full"></span>
+        <button (click)="selectCategory('Birthday')" class="flex flex-col items-center group">
+          <span class="text-sm font-semibold pb-2" [ngClass]="useCase.selectedCategory() === 'Birthday' ? 'text-white' : 'text-gray-400 group-hover:text-white transition-colors'">Birthdays</span>
+          <span class="w-full h-0.5 rounded-full" [ngClass]="useCase.selectedCategory() === 'Birthday' ? 'bg-primary' : 'bg-transparent group-hover:bg-gray-700 transition-colors'"></span>
         </button>
-        <button class="flex flex-col items-center group">
-          <span
-            class="text-gray-400 group-hover:text-white transition-colors text-sm font-semibold pb-2">Anniversaries</span>
-          <span class="w-full h-0.5 bg-transparent group-hover:bg-gray-700 transition-colors rounded-full"></span>
+        <button (click)="selectCategory('Anniversary')" class="flex flex-col items-center group">
+          <span class="text-sm font-semibold pb-2" [ngClass]="useCase.selectedCategory() === 'Anniversary' ? 'text-white' : 'text-gray-400 group-hover:text-white transition-colors'">Anniversaries</span>
+          <span class="w-full h-0.5 rounded-full" [ngClass]="useCase.selectedCategory() === 'Anniversary' ? 'bg-primary' : 'bg-transparent group-hover:bg-gray-700 transition-colors'"></span>
         </button>
       </div>
     </div>
@@ -37,111 +35,56 @@
     <!-- List -->
     <main class="flex-1 overflow-y-auto no-scrollbar p-5 space-y-5 pb-24 relative">
 
-      <!-- Card 1 -->
-      <div routerLink="/landing/events/detail"
-        class="cursor-pointer relative w-full rounded-2xl overflow-hidden group shadow-lg shadow-black/40">
-        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-          style="background-image: url('/images/backgrounds/anniversary-parents.jpg')">
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30"></div>
-        <div class="relative p-5 flex flex-col h-full min-h-[200px] justify-between">
-          <div class="flex justify-between items-start">
-            <div class="bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
-              <span class="text-xs font-semibold text-white tracking-wide uppercase">Anniversary</span>
-            </div>
-            <button mat-icon-button class="text-white/60">
-              <mat-icon>more_vert</mat-icon>
-            </button>
+      @for (event of filteredEvents(); track event.id) {
+        <div [routerLink]="['/landing/events/detail']" [queryParams]="{ id: event.id }"
+          class="cursor-pointer relative w-full rounded-2xl overflow-hidden group shadow-lg shadow-black/40">
+          <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+            [ngStyle]="getBackgroundStyle(event)">
           </div>
-          <div class="mt-8">
-            <h3 class="text-white text-2xl font-bold leading-tight mb-1">Parents' 30th Anniversary</h3>
-            <p class="text-gray-300 text-sm font-medium mb-6 flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">calendar_month</span> Oct 24, 2024
-            </p>
-            <div class="grid grid-cols-4 gap-2">
-              <div
-                class="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-lg py-2 border border-white/5">
-                <span class="text-xl font-bold text-white font-mono">45</span><span
-                  class="text-[10px] text-gray-300 uppercase">Days</span>
+          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-black/30"></div>
+          <div class="relative p-5 flex flex-col h-full min-h-[200px] justify-between">
+            <div class="flex justify-between items-start">
+              <div class="bg-white/10 backdrop-blur-md px-3 py-1 rounded-full border border-white/10">
+                <span class="text-xs font-semibold text-white tracking-wide uppercase">{{ event.category }}</span>
               </div>
-              <div
-                class="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-lg py-2 border border-white/5">
-                <span class="text-xl font-bold text-white font-mono">12</span><span
-                  class="text-[10px] text-gray-300 uppercase">Hrs</span>
+              <button mat-icon-button class="text-white/60">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+            <div class="mt-8">
+              <h3 class="text-white text-2xl font-bold leading-tight mb-1">{{ event.title }}</h3>
+              <p class="text-gray-300 text-sm font-medium mb-6 flex items-center gap-1">
+                <span class="material-symbols-outlined text-[16px]">calendar_month</span> {{ formatDate(event.date) }}
+              </p>
+              
+              @let time = calculateTimeUntil(event.date);
+              <div class="grid grid-cols-4 gap-2">
+                <div class="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-lg py-2 border border-white/5">
+                  <span class="text-xl font-bold text-white font-mono">{{ time.days }}</span>
+                  <span class="text-[10px] text-gray-300 uppercase">Days</span>
+                </div>
+                <div class="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-lg py-2 border border-white/5">
+                  <span class="text-xl font-bold text-white font-mono">{{ time.hours }}</span>
+                  <span class="text-[10px] text-gray-300 uppercase">Hrs</span>
+                </div>
+                <div class="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-lg py-2 border border-white/5">
+                  <span class="text-xl font-bold text-white font-mono">{{ time.minutes }}</span>
+                  <span class="text-[10px] text-gray-300 uppercase">Mins</span>
+                </div>
+                <div class="flex flex-col items-center bg-primary/80 backdrop-blur-sm rounded-lg py-2 border border-primary/50 shadow-lg">
+                  <span class="text-xl font-bold text-white font-mono">{{ time.seconds }}</span>
+                  <span class="text-[10px] text-white/90 uppercase">Secs</span>
+                </div>
               </div>
-              <div
-                class="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-lg py-2 border border-white/5">
-                <span class="text-xl font-bold text-white font-mono">04</span><span
-                  class="text-[10px] text-gray-300 uppercase">Mins</span>
-              </div>
-              <div
-                class="flex flex-col items-center bg-primary/80 backdrop-blur-sm rounded-lg py-2 border border-primary/50 shadow-lg">
-                <span class="text-xl font-bold text-white font-mono">30</span><span
-                  class="text-[10px] text-white/90 uppercase">Secs</span>
-              </div>
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div routerLink="/landing/events/detail"
-        class="cursor-pointer relative w-full rounded-2xl overflow-hidden group shadow-lg shadow-black/40">
-        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-          style="background-image: url('/images/backgrounds/holiday-christmas.jpg')">
+      } @empty {
+        <div class="flex flex-col items-center justify-center py-20 text-gray-400">
+          <mat-icon class="text-6xl mb-4 opacity-20">event_busy</mat-icon>
+          <p>No events found</p>
         </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
-        <div class="relative p-5 flex flex-col h-full min-h-[180px] justify-between">
-          <div class="flex justify-between items-start">
-            <div class="bg-indigo-500/30 backdrop-blur-md px-3 py-1 rounded-full border border-indigo-400/20">
-              <span class="text-xs font-semibold text-indigo-100 tracking-wide uppercase">Holiday</span>
-            </div>
-          </div>
-          <div class="mt-6">
-            <h3 class="text-white text-xl font-bold leading-tight mb-1">New Year's Eve</h3>
-            <p class="text-gray-300 text-sm font-medium mb-4 flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">event</span> Dec 31, 2024
-            </p>
-            <div class="flex items-baseline gap-1 text-white">
-              <span class="text-3xl font-bold font-mono tracking-tighter">112</span> <span
-                class="text-sm text-gray-400 mr-2">days</span>
-              <span class="text-3xl font-bold font-mono tracking-tighter">06</span> <span
-                class="text-sm text-gray-400 mr-2">hrs</span>
-              <span class="text-3xl font-bold font-mono tracking-tighter">30</span> <span
-                class="text-sm text-gray-400">mins</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Card 3 -->
-      <div routerLink="/landing/events/detail"
-        class="cursor-pointer relative w-full rounded-2xl overflow-hidden group shadow-lg shadow-black/40">
-        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-          style="background-image: url('/images/backgrounds/birthday-celebration.jpg')">
-        </div>
-        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
-        <div class="relative p-5 flex flex-col h-full min-h-[180px] justify-between">
-          <div class="flex justify-between items-start">
-            <div class="bg-pink-500/30 backdrop-blur-md px-3 py-1 rounded-full border border-pink-400/20">
-              <span class="text-xs font-semibold text-pink-100 tracking-wide uppercase">Birthday</span>
-            </div>
-          </div>
-          <div class="mt-6">
-            <h3 class="text-white text-xl font-bold leading-tight mb-1">Sarah's Birthday</h3>
-            <p class="text-gray-300 text-sm font-medium mb-4 flex items-center gap-1">
-              <span class="material-symbols-outlined text-[16px]">cake</span> Nov 02, 2024
-            </p>
-            <div class="w-full bg-white/10 rounded-full h-1.5 mb-2 overflow-hidden">
-              <div class="bg-gradient-to-r from-pink-500 to-purple-500 h-full rounded-full" style="width: 85%"></div>
-            </div>
-            <div class="flex justify-between items-end text-white">
-              <span class="text-xs text-gray-400">Time left</span>
-              <span class="text-lg font-bold font-mono">05d 02h 15m</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      }
 
     </main>
 

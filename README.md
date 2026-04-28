@@ -120,26 +120,36 @@ sudo DEPLOY_USER=deploy DEPLOY_PATH=/var/www/ms-ng-view DOMAIN=your-domain.com b
 - **Deployment:** GitHub Actions
 - **Web Server:** Nginx (recommended)
 
-## 📂 Project Structure
+## 📂 Project Structure (4-Layer Clean Architecture)
 
-```
+本工程遵循严格的 **整洁架构 (Clean Architecture)** 规范，旨在实现 UI 与业务逻辑的深度解耦：
+
+```text
 ms-ng-view/
 ├── src/
 │   ├── app/
-│   │   ├── core/           # Core services and utilities
-│   │   ├── features/       # Feature modules
-│   │   │   ├── create-event/
-│   │   │   ├── dashboard/
-│   │   │   ├── event-detail/
-│   │   │   └── ...
-│   │   └── components/     # Shared components
-│   └── styles.css
-├── .github/
-│   ├── workflows/         # GitHub Actions workflows
-│   ├── DEPLOYMENT.md      # Deployment guide
-│   └── setup-server.sh    # Server setup script
-└── public/                # Static assets
+│   │   ├── core/               # 核心逻辑层
+│   │   │   ├── domain/         # [1. Domain Layer] 业务实体、Repository 接口定义
+│   │   │   ├── use-cases/      # [2. Use Case Layer] 业务流程编排、Signal 状态管理
+│   │   │   ├── adapters/       # [3. Adapter Layer] 基础设施实现 (HttpClient, API 请求)
+│   │   │   ├── constants/      # 集中化配置 (URLConfig 等)
+│   │   │   ├── guards/         # 路由守卫
+│   │   │   ├── interceptors/   # HTTP 拦截器
+│   │   │   └── services/       # 全局基础服务 (Auth, User, Theme)
+│   │   └── features/           # [4. UI Layer] 表现层
+│   │       ├── chat/           # 智能助手模块 (Dumb Component)
+│   │       ├── knowledge/      # 知识库管理模块
+│   │       ├── dashboard/      # 概览展示模块
+│   │       └── ...             # 其他功能模块
+│   └── styles.css              # 全局样式
+├── .agent/rules/               # AI 智能体规范
+│   ├── CODING_STANDARDS.md     # 核心架构与编码规范
+│   └── ai-code-ws.md           # 智能体执行准则
+├── public/                     # 静态资源与国际化文件 (i18n)
+└── tests/                      # 单元测试 (Jest)
 ```
+
+详细架构细节请参考：👉 [CODING_STANDARDS.md](.agent/rules/CODING_STANDARDS.md)
 
 ## 📝 Scripts
 
