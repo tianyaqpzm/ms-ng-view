@@ -19,6 +19,7 @@ export const routes: Routes = [
   { path: 'landing/events/detail', component: EventDetailComponent, canActivate: [authGuard] },
   { path: 'landing/customize', component: CustomizeComponent, canActivate: [authGuard] },
   { path: 'chat', component: ChatComponent, canActivate: [authGuard] },
+  { path: 'chat/:sessionId', component: ChatComponent, canActivate: [authGuard] },
   { path: 'knowledge', component: KnowledgeComponent, canActivate: [authGuard] },
   { path: 'knowledge/embedding', component: KnowledgeEmbeddingComponent, canActivate: [authGuard] },
   { path: 'knowledge/embedding/:id', component: KnowledgeEmbeddingComponent, canActivate: [authGuard] },

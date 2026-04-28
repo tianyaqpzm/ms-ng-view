@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpEventType } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -79,10 +80,34 @@ export class ChatComponent {
         public themeService: ThemeService,
         private authService: AuthService,
         private dialog: MatDialog,
-        private translate: TranslateService
+        private translate: TranslateService,
+        private route: ActivatedRoute,
+        private router: Router
     ) {
-        this.initSession();
+        this.watchRouteParams();
         this.loadTopics();
+    }
+
+    private watchRouteParams() {
+        this.route.params.subscribe(async params => {
+            const sessionId = params['sessionId'];
+            if (sessionId) {
+                this.activeSessionId.set(sessionId);
+                this.loadHistory(sessionId);
+                // 确保侧边栏列表已加载
+                if (this.chatSessions().length === 0) {
+                    this.refreshSessionsListSilently();
+                }
+            } else {
+                // 如果访问 /chat 没有参数，尝试跳转到最近会话或新建
+                const sessions = await this.refreshSessionsListSilently();
+                if (sessions && sessions.length > 0) {
+                    this.router.navigate(['/chat', sessions[0].sessionId], { replaceUrl: true });
+                } else {
+                    this.createNewSession();
+                }
+            }
+        });
     }
 
     private async loadTopics() {
@@ -98,34 +123,15 @@ export class ChatComponent {
         this.selectedTopic.set(topic);
     }
 
-    private async initSession() {
-        try {
-            const sessionsResponse = await firstValueFrom(
-                this.http.get<ChatSessionDto[]>(`/rest/dark/v1/history/sessions`)
-            );
-            this.chatSessions.set(sessionsResponse);
-
-            if (sessionsResponse.length > 0) {
-                // Load the most recently active session
-                this.switchSession(sessionsResponse[0].sessionId);
-            } else {
-                this.createNewSession();
-            }
-        } catch (err) {
-            console.error('Failed to load sessions', err);
-            this.createNewSession(); // fallback
-        }
-    }
-
     protected createNewSession() {
         const newSessionId = crypto.randomUUID();
-        this.activeSessionId.set(newSessionId);
-        this.messages.set([]);
+        this.router.navigate(['/chat', newSessionId], { 
+            replaceUrl: this.router.url === '/chat' 
+        });
     }
 
     protected switchSession(sessionId: string) {
-        this.activeSessionId.set(sessionId);
-        this.loadHistory(sessionId);
+        this.router.navigate(['/chat', sessionId]);
     }
 
     private async loadHistory(sessionId: string) {
@@ -445,11 +451,11 @@ export class ChatComponent {
                             }
                         }
                     }
-                }
-                
-                // When request finishes gracefully, refresh session list to capture new chat
-                if (aiMsgIndex === 1) { // 意味着这是本session的第一句话
-                    this.refreshSessionsListSilently();
+                    
+                    // When request finishes gracefully, refresh session list to capture new chat
+                    if (aiMsgIndex === 1) { // 意味着这是本session的第一句话
+                        this.refreshSessionsListSilently();
+                    }
                 }
             },
             error: (error) => {
@@ -467,12 +473,13 @@ export class ChatComponent {
         });
     }
 
-    private async refreshSessionsListSilently() {
+    private async refreshSessionsListSilently(): Promise<ChatSessionDto[]> {
         try {
             const sessionsResponse = await firstValueFrom(this.http.get<ChatSessionDto[]>(`/rest/dark/v1/history/sessions`));
             this.chatSessions.set(sessionsResponse);
+            return sessionsResponse;
         } catch (e) {
-            // ignore
+            return [];
         }
     }
 }
