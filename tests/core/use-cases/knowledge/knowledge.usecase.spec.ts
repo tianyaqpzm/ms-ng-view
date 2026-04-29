@@ -37,11 +37,12 @@ describe('KnowledgeUseCase', () => {
     useCase = TestBed.inject(KnowledgeUseCase);
   });
 
-  it('should load topics on initialization', async () => {
+  it('should load topics and NOT auto-select', async () => {
+    useCase.selectedTopicId.set(null);
     await useCase.refreshTopics();
     expect(adapterMock.getTopics).toHaveBeenCalled();
     expect(useCase.topics().length).toBe(1);
-    expect(useCase.topics()[0].name).toBe('Topic 1');
+    expect(useCase.selectedTopicId()).toBeNull();
   });
 
   it('should select topic and load documents', async () => {

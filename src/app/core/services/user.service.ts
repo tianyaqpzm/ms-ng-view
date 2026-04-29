@@ -18,7 +18,9 @@ export class UserService {
     constructor(private http: HttpClient, private authService: AuthService) {}
 
     /**
-     * APP_INITIALIZER 调用的初始化方法
+     * 系统初始化时调用。
+     * 负责从 URL 提取 Token（如果存在），并根据本地 Token 加载用户信息。
+     * @returns 初始化完成的 Promise。
      */
     async initialize(): Promise<void> {
         // 1. 如果 URL 里携带了 token，先提取并保存
@@ -40,6 +42,10 @@ export class UserService {
         }
     }
 
+    /**
+     * 从后端接口获取当前登录用户的个人资料。
+     * @returns 包含 UserProfile 的 Promise。
+     */
     async getCurrentUser(): Promise<UserProfile> {
         return await firstValueFrom(
             this.http.get<UserProfile>('/rest/dark/v1/user/me')

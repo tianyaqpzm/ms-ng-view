@@ -29,7 +29,15 @@
     "ATTACH_FILE": "Add file or photo",
     "SELECT_KB": "Select Knowledge Base (RAG)",
     "NO_KB": "No Knowledge Base",
-    "KNOWLEDGE_BASE": "Knowledge Base"
+    "KNOWLEDGE_BASE": "Knowledge Base",
+    "SUGGESTIONS": {
+      "RECOMMEND": "Recommend for you",
+      "IMAGE": "Create an image",
+      "MUSIC": "Create music",
+      "STUDY": "Help me study",
+      "WRITE": "Write something",
+      "ENERGY": "Energize my day"
+    }
   },
   "THEME": {
     "SWITCH_TO_LIGHT": "Switch to light mode",

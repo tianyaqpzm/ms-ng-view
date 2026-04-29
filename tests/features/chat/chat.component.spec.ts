@@ -7,7 +7,7 @@ import { ThemeService } from '@/app/core/services/theme.service';
 import { AuthService } from '@/app/core/services/auth.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ActivatedRoute } from '@angular/router';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { signal } from '@angular/core';
 
 describe('ChatComponent', () => {
@@ -15,8 +15,10 @@ describe('ChatComponent', () => {
   let fixture: ComponentFixture<ChatComponent>;
   let useCaseMock: any;
   let knowledgeUseCaseMock: any;
+  let paramsSubject: Subject<any>;
 
   beforeEach(async () => {
+    paramsSubject = new Subject();
     useCaseMock = {
       messages: signal([]),
       selectedFiles: signal([]),
@@ -49,13 +51,16 @@ describe('ChatComponent', () => {
         { provide: AuthService, useValue: { logout: jest.fn() } },
         { 
           provide: ActivatedRoute, 
-          useValue: { params: of({ sessionId: '123' }) } 
+          useValue: { params: paramsSubject.asObservable() } 
         }
       ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ChatComponent);
     component = fixture.componentInstance;
+    
+    // Pushing initial value before detectChanges so it's captured in constructor
+    paramsSubject.next({ sessionId: '123' });
     fixture.detectChanges();
   });
 
@@ -65,5 +70,17 @@ describe('ChatComponent', () => {
 
   it('should call loadHistory on init with sessionId', () => {
     expect(useCaseMock.loadHistory).toHaveBeenCalledWith('123');
+  });
+
+  it('should have sidebar open by default', () => {
+    expect((component as any).isSidebarOpen()).toBe(true);
+  });
+
+  it('should reset state when sessionId is missing', () => {
+    // Manually trigger the subscription with empty params
+    paramsSubject.next({});
+    
+    expect(useCaseMock.activeSessionId()).toBe('');
+    expect(useCaseMock.messages()).toEqual([]);
   });
 });

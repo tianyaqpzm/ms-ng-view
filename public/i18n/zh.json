@@ -29,7 +29,15 @@
     "ATTACH_FILE": "添加文件或图片",
     "SELECT_KB": "选择知识库 (RAG)",
     "NO_KB": "不使用知识库",
-    "KNOWLEDGE_BASE": "知识库"
+    "KNOWLEDGE_BASE": "知识库",
+    "SUGGESTIONS": {
+      "RECOMMEND": "为你推荐",
+      "IMAGE": "制作图片",
+      "MUSIC": "创作音乐",
+      "STUDY": "帮我学习",
+      "WRITE": "随便写点什么",
+      "ENERGY": "给我的一天注入活力"
+    }
   },
   "THEME": {
     "SWITCH_TO_LIGHT": "切换到亮色模式",

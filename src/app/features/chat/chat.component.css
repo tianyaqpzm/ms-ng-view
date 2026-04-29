@@ -16,12 +16,21 @@
     }
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
 .animate-fade-in-up {
-    animation: fadeInUp 0.6s ease-out;
+    animation: fadeInUp 0.6s ease-out forwards;
 }
 
 .fade-in {
-    animation: fadeInUp 0.3s ease-out;
+    animation: fadeInUp 0.3s ease-out forwards;
 }
 
 /* Material Icon consistency tweaks */

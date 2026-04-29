@@ -97,7 +97,17 @@ trigger: always_on
 
 ---
 
-## 七、 业务特性规范 (Feature Specifics)
+---
+
+## 七、 文档与注释规范 (Documentation Standards)
+- **TSDoc 强制**: 所有导出的类、接口、公共方法（public）和受保护方法（protected）必须包含 TSDoc 注释。
+- **内容要求**: 注释必须清晰描述功能、参数（`@param`）和返回值（`@returns`）。
+- **语言**: 核心业务逻辑建议使用中文注释，保持与需求文档一致。
+- **代码自解释**: 良好的命名是第一位的，注释应侧重于解释“为什么”而非“做什么”。
+
+---
+
+## 八、 业务特性规范 (Feature Specifics)
 
 ### 1. 国际化 (i18n)
 - 使用 `provideTranslateService` 和 `provideTranslateHttpLoader` 函数式 Provider。

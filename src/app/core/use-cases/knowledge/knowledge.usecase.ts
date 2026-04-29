@@ -34,18 +34,22 @@ export class KnowledgeUseCase {
     );
   });
 
+  /**
+   * 刷新知识库主题（Topic）列表。
+   */
   async refreshTopics() {
     try {
       const data = await this.adapter.getTopics();
       this.topics.set(data);
-      if (data.length > 0 && !this.selectedTopicId()) {
-        this.selectTopic(data[0].id!);
-      }
     } catch (e) {
       console.error('Failed to load topics', e);
     }
   }
 
+  /**
+   * 选中一个主题并加载其关联的文档。
+   * @param id - 主题 ID。
+   */
   async selectTopic(id: string) {
     this.selectedTopicId.set(id);
     this.searchQuery.set('');
@@ -57,6 +61,11 @@ export class KnowledgeUseCase {
     }
   }
 
+  /**
+   * 保存或更新主题信息。
+   * @param id - 如果为 null 则创建新主题，否则更新现有主题。
+   * @param payload - 主题数据。
+   */
   async saveTopic(id: string | null, payload: any) {
     this.isSubmitting.set(true);
     try {
@@ -76,6 +85,10 @@ export class KnowledgeUseCase {
     }
   }
 
+  /**
+   * 删除主题及其关联。
+   * @param id - 主题 ID。
+   */
   async deleteTopic(id: string) {
     await this.adapter.deleteTopic(id);
     if (this.selectedTopicId() === id) {
@@ -85,6 +98,10 @@ export class KnowledgeUseCase {
     await this.refreshTopics();
   }
 
+  /**
+   * 删除特定的知识文档。
+   * @param documentId - 文档 ID。
+   */
   async deleteDocument(documentId: string) {
     await this.adapter.deleteDocument(documentId);
     if (this.selectedTopicId()) {
@@ -92,10 +109,21 @@ export class KnowledgeUseCase {
     }
   }
 
+  /**
+   * 启动文档的向量化/解析任务。
+   * @param documentId - 文档 ID。
+   * @param configPayload - 任务配置。
+   * @returns 任务启动结果。
+   */
   async startIngestTask(documentId: string, configPayload: any) {
     return this.adapter.startIngestTask(documentId, configPayload);
   }
 
+  /**
+   * 上传文件到指定主题下。
+   * @param topicId - 主题 ID。
+   * @param file - 待上传的文件。
+   */
   async uploadDocument(topicId: string, file: File) {
     this.isUploading.set(true);
     try {
@@ -106,6 +134,11 @@ export class KnowledgeUseCase {
     }
   }
 
+  /**
+   * 获取文档的预览 URL。
+   * @param documentId - 文档 ID。
+   * @returns 预览链接。
+   */
   getDocumentPreviewUrl(documentId: string): string {
     return this.adapter.getDocumentPreviewUrl(documentId);
   }
