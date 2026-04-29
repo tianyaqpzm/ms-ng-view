@@ -104,6 +104,22 @@ body {
   font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
 
+/* 🛠️ 全局图标对齐修复：消除 mat-icon 默认 baseline 对齐导致的偏移 */
+.mat-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  overflow: visible !important; /* 防止 Tall 字符被剪裁 */
+}
+
+/* 针对 mat-icon-button 确保容器本身也是 flex 居中 */
+.mat-mdc-icon-button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
 /* 6. Angular Material 暗黑模式强制覆盖 (保留你原有的逻辑) */
 .dark .mat-mdc-form-field-input-control,
 .dark .mat-mdc-select-value {

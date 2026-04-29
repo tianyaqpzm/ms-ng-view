@@ -1,10 +1,10 @@
 import { environment } from '@/environments/environment';
+import { DOCUMENT } from '@angular/common';
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { EMPTY, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
-import { DOCUMENT } from '@angular/common';
 
 export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
@@ -14,9 +14,7 @@ export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
 
     // 1. 获取本地 Token
     const token = authService.getToken();
-    if (token) {
-        console.log('【Interceptor】Token found, injecting Authorization header');
-    } else {
+    if (!token) {
         console.warn('【Interceptor】No token found for request:', req.url);
     }
 
@@ -66,4 +64,4 @@ export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
             return throwError(() => error);
         })
     );
-};
+};

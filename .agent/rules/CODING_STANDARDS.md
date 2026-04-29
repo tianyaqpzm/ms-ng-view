@@ -80,6 +80,11 @@ trigger: always_on
 - **选择器转义**: 在 CSS 中引用 Tailwind 重要性修饰符时，**必须**对 `!` 进行转义（例：`.\!w-8`）。
 - **CSS 用途**: 仅用于覆盖 Material 深层样式 (`::ng-deep`)、复杂 Keyframes 动画或无法通过 Tailwind 实现的交互。
 
+### 3. 图标对齐与剪裁规范 (Icon Alignment & Clipping)
+- **全局对齐**：系统已在 `styles.css` 中全局配置 `mat-icon` 为 `inline-flex` 居中并设置 `overflow: visible`。
+- **使用要求**：在组件中使用图标时，**仅需**通过 Tailwind 设置所需的 `font-size`。
+- **示例**：`<mat-icon class="!text-[16px]">content_copy</mat-icon>`（无需再写一堆 flex 补丁）。
+
 ---
 
 ## 六、 维护与测试规范 (Maintenance & Testing)

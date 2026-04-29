@@ -15,15 +15,13 @@
 
         <div class="p-4 h-full flex flex-col w-72">
             <div class="flex items-center justify-between mb-6">
-                <button mat-icon-button (click)="toggleSidebar()"
-                    class="text-gray-500 dark:text-[#c4c7c5] hover:bg-gray-200 dark:hover:bg-[#333537] rounded-full">
+                <button mat-icon-button (click)="toggleSidebar()">
                     <mat-icon>menu</mat-icon>
                 </button>
                 <div class="flex items-center gap-2" *ngIf="isSidebarOpen()">
                     <div
                         class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-red-500 flex items-center justify-center">
-                        <mat-icon
-                            class="text-white !text-[12px] w-3 h-3 flex items-center justify-center">auto_awesome</mat-icon>
+                        <mat-icon class="text-white !text-[12px]">auto_awesome</mat-icon>
                     </div>
                     <span class="text-lg font-medium tracking-tight">ms-ng-view</span>
                 </div>
@@ -35,21 +33,28 @@
                     {{ 'SIDEBAR.RECENT' | translate }}
                     <button (click)="createNewSession()" class="text-primary hover:text-primary-dark transition-colors"
                         [title]="'SIDEBAR.NEW_CHAT' | translate">
-                        <mat-icon class="text-[16px] w-4 h-4">add</mat-icon>
+                        <mat-icon class="!text-[16px]">add</mat-icon>
                     </button>
                 </div>
 
                 <!-- Dynamic History Items -->
                 @for (session of chatSessions(); track session.sessionId) {
-                <button (click)="switchSession(session.sessionId)"
-                    [class.bg-gray-200]="session.sessionId === activeSessionId()"
-                    [class.dark:bg-[#333537]]="session.sessionId === activeSessionId()"
-                    [class.text-gray-900]="session.sessionId === activeSessionId()"
-                    class="w-full text-left px-3 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#333537] text-sm/5 truncate text-gray-700 dark:text-[#e3e3e3] transition-colors flex items-center gap-3 group">
-                    <mat-icon class="text-base/4 w-4 h-4 !text-[18px]">chat_bubble_outline</mat-icon>
-                    <span class="truncate" [title]="session.title">{{ session.title || ('SIDEBAR.NEW_CONVERSATION' |
-                        translate) }}</span>
-                </button>
+                <div class="relative group">
+                    <button (click)="switchSession(session.sessionId)"
+                        [class.bg-gray-200]="session.sessionId === activeSessionId()"
+                        [class.dark:bg-[#333537]]="session.sessionId === activeSessionId()"
+                        [class.text-gray-900]="session.sessionId === activeSessionId()"
+                        class="w-full text-left px-3 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#333537] text-sm/5 truncate text-gray-700 dark:text-[#e3e3e3] transition-colors flex items-center gap-3 pr-10">
+                        <mat-icon class="!text-[18px]">chat_bubble_outline</mat-icon>
+                        <span class="truncate" [title]="session.title">{{ session.title || ('SIDEBAR.NEW_CONVERSATION' |
+                            translate) }}</span>
+                    </button>
+                    <button mat-icon-button (click)="onDeleteSession($event, session.sessionId)" 
+                        class="!absolute right-2 top-1/2 -translate-y-1/2 !opacity-0 group-hover:!opacity-100 transition-opacity !w-8 !h-8 text-gray-400 hover:!text-red-500 rounded-full hover:bg-gray-300 dark:hover:bg-[#444746]"
+                        [title]="'CHAT.DELETE_SESSION' | translate">
+                        <mat-icon class="!text-[18px]">delete_outline</mat-icon>
+                    </button>
+                </div>
                 }
             </div>
 
@@ -57,7 +62,7 @@
 
                 <button
                     class="w-full text-left px-3 py-2 rounded-full hover:bg-gray-200 dark:hover:bg-[#333537] text-sm text-gray-700 dark:text-[#e3e3e3] flex items-center gap-3 transition-colors">
-                    <mat-icon class="text-base/4 w-4 h-4 !text-[18px]">settings</mat-icon>
+                    <mat-icon class="!text-[18px]">settings</mat-icon>
                     {{ 'SIDEBAR.SETTINGS' | translate }}
                 </button>
             </div>
@@ -195,16 +200,16 @@
                             <!-- Edit icon for last message -->
                             @if (isLastUserMessage($index)) {
                             <button mat-icon-button
-                                class="!w-8 !h-8 text-gray-500 dark:text-[#c4c7c5] hover:text-primary transition-colors"
+                                class="!w-8 !h-8 !flex !items-center !justify-center text-gray-500 dark:text-[#c4c7c5] hover:text-primary transition-colors"
                                 (click)="editMessage($index)" [matTooltip]="'CHAT.EDIT' | translate">
-                                <mat-icon class="!text-[16px] w-4 h-4 leading-[16px]">edit</mat-icon>
+                                <mat-icon class="!text-[16px]">edit</mat-icon>
                             </button>
                             }
                             <!-- Copy icon -->
                             <button mat-icon-button
-                                class="!w-8 !h-8 text-gray-500 dark:text-[#c4c7c5] hover:text-gray-900 dark:hover:text-white transition-colors"
+                                class="!w-8 !h-8 !flex !items-center !justify-center text-gray-500 dark:text-[#c4c7c5] hover:text-gray-900 dark:hover:text-white transition-colors"
                                 (click)="copyText(msg.content)" [matTooltip]="'CHAT.COPY_TEXT' | translate">
-                                <mat-icon class="!text-[16px] w-4 h-4 leading-[16px]">content_copy</mat-icon>
+                                <mat-icon class="!text-[16px]">content_copy</mat-icon>
                             </button>
                         </div>
 
@@ -232,32 +237,30 @@
                                 class="flex items-center gap-0.5 mt-1 -ml-2 opacity-0 group-hover/msg:opacity-100 transition-opacity duration-200">
                                 <button mat-icon-button (click)="rateResponse($index, 'good')"
                                     [class.text-blue-500]="responseRatings().get($index) === 'good'"
-                                    class="!w-8 !h-8 text-gray-400 hover:text-blue-500 transition-colors"
+                                    class="!w-8 !h-8 !flex !items-center !justify-center text-gray-400 hover:text-blue-500 transition-colors"
                                     [matTooltip]="'CHAT.RATE_GOOD' | translate">
-                                    <mat-icon
-                                        class="!text-[18px] w-4.5 h-4.5 leading-[18px]">thumb_up_off_alt</mat-icon>
+                                    <mat-icon class="!text-[18px]">thumb_up_off_alt</mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="rateResponse($index, 'bad')"
                                     [class.text-red-500]="responseRatings().get($index) === 'bad'"
-                                    class="!w-8 !h-8 text-gray-400 hover:text-red-500 transition-colors"
+                                    class="!w-8 !h-8 !flex !items-center !justify-center text-gray-400 hover:text-red-500 transition-colors"
                                     [matTooltip]="'CHAT.RATE_BAD' | translate">
-                                    <mat-icon
-                                        class="!text-[18px] w-4.5 h-4.5 leading-[18px]">thumb_down_off_alt</mat-icon>
+                                    <mat-icon class="!text-[18px]">thumb_down_off_alt</mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="copyText(msg.content)"
-                                    class="!w-8 !h-8 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                                    class="!w-8 !h-8 !flex !items-center !justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                                     [matTooltip]="'CHAT.COPY_RESPONSE' | translate">
-                                    <mat-icon class="!text-[18px] w-4.5 h-4.5 leading-[18px]">content_copy</mat-icon>
+                                    <mat-icon class="!text-[18px]">content_copy</mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="regenerateResponse($index)"
-                                    class="!w-8 !h-8 text-gray-400 hover:text-primary transition-colors"
+                                    class="!w-8 !h-8 !flex !items-center !justify-center text-gray-400 hover:text-primary transition-colors"
                                     [matTooltip]="'CHAT.REGENERATE' | translate">
-                                    <mat-icon class="!text-[18px] w-4.5 h-4.5 leading-[18px]">refresh</mat-icon>
+                                    <mat-icon class="!text-[18px]">refresh</mat-icon>
                                 </button>
                                 <button mat-icon-button (click)="exportResponse($index)"
-                                    class="!text-[18px] !w-8 !h-8 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                                    class="!w-8 !h-8 !flex !items-center !justify-center text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                                     [matTooltip]="'CHAT.EXPORT' | translate">
-                                    <mat-icon class="!text-[18px] w-4.5 h-4.5 leading-[18px]">download</mat-icon>
+                                    <mat-icon class="!text-[18px]">download</mat-icon>
                                 </button>
                             </div>
                         </div>
@@ -343,12 +346,12 @@
                     @if (selectedTopic()) {
                     <div
                         class="flex items-center gap-1 bg-gray-200 dark:bg-[#333537] text-gray-700 dark:text-[#e3e3e3] px-2 py-1 rounded-md border border-gray-300 dark:border-[#444746] select-none text-xs whitespace-nowrap mb-2.5 shadow-sm">
-                        <mat-icon class="text-xs !w-3 !h-3 !text-[12px] opacity-70">library_books</mat-icon>
+                        <mat-icon class="!text-[12px] !flex !items-center !justify-center opacity-70">library_books</mat-icon>
                         <span class="max-w-[100px] truncate" [title]="selectedTopic()!.name">{{ selectedTopic()!.name
                             }}</span>
-                        <button (click)="selectTopic(null)"
+                         <button (click)="selectTopic(null)"
                             class="flex items-center justify-center -mr-1 hover:text-red-500 text-gray-500 dark:text-[#c4c7c5]">
-                            <mat-icon class="!w-3 !h-3 !text-[12px]">close</mat-icon>
+                            <mat-icon class="!text-[12px] !flex !items-center !justify-center">close</mat-icon>
                         </button>
                     </div>
                     }
@@ -360,17 +363,17 @@
 
                     <div class="flex items-center gap-1 mb-1 mr-1">
                         <button mat-icon-button
-                            class="text-gray-500 dark:text-[#c4c7c5] hover:text-gray-900 dark:hover:text-[#e3e3e3]"
+                            class="!flex !items-center !justify-center text-gray-500 dark:text-[#c4c7c5] hover:text-gray-900 dark:hover:text-[#e3e3e3]"
                             *ngIf="!userInput()" (click)="toggleRecording()"
                             [matTooltip]="isRecording() ? 'Stop recording' : 'Use microphone'"
                             [class.text-red-500]="isRecording()" [class.animate-pulse]="isRecording()">
-                            <mat-icon>{{ isRecording() ? 'stop_circle' : 'mic' }}</mat-icon>
+                            <mat-icon class="!flex !items-center !justify-center">{{ isRecording() ? 'stop_circle' : 'mic' }}</mat-icon>
                         </button>
                         <button mat-icon-button (click)="sendMessage()"
                             [disabled]="!userInput() && selectedFiles().length === 0"
-                            class="transition-all duration-200"
+                            class="!flex !items-center !justify-center transition-all duration-200"
                             [ngClass]="(userInput() || selectedFiles().length > 0) ? 'text-white bg-[#004a77] hover:bg-[#005c94]' : 'text-gray-400 dark:text-[#444746]'">
-                            <mat-icon>send</mat-icon>
+                            <mat-icon class="!flex !items-center !justify-center">send</mat-icon>
                         </button>
                     </div>
                 </div>
@@ -388,8 +391,8 @@
         <div class="relative w-full max-w-2xl bg-black rounded-lg overflow-hidden border border-gray-800">
             <!-- Close Button -->
             <button mat-icon-button (click)="closeCamera()"
-                class="absolute top-4 right-4 z-10 text-white bg-black/50 hover:bg-black/70 rounded-full">
-                <mat-icon>close</mat-icon>
+                class="!flex !items-center !justify-center absolute top-4 right-4 z-10 text-white bg-black/50 hover:bg-black/70 rounded-full">
+                <mat-icon class="!flex !items-center !justify-center">close</mat-icon>
             </button>
 
             <!-- Video Preview -->
@@ -400,9 +403,9 @@
             <div
                 class="absolute bottom-0 left-0 w-full p-6 flex justify-center bg-gradient-to-t from-black/80 to-transparent">
                 <button mat-fab color="primary" (click)="capturePhoto()"
-                    class="!w-16 !h-16 !bg-white !text-black flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+                    class="!w-16 !h-16 !bg-white !text-black !flex !items-center !justify-center shadow-lg hover:scale-105 transition-transform"
                     matTooltip="Capture">
-                    <mat-icon class="!text-3xl !w-8 !h-8 !text-[28px]">camera</mat-icon>
+                    <mat-icon class="!text-3xl !text-[28px] !flex !items-center !justify-center">camera</mat-icon>
                 </button>
             </div>
         </div>

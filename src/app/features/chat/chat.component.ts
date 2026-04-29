@@ -8,6 +8,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { DeleteConfirmDialogComponent } from './delete-confirm-dialog.component';
 import { KnowledgeUseCase } from '../../core/use-cases/knowledge/knowledge.usecase';
 import { Topic } from '../../core/domain/knowledge/knowledge.model';
 import { UserService } from '../../core/services/user.service';
@@ -50,6 +51,8 @@ export class ChatComponent {
     ];
 
     public chatUseCase = inject(ChatUseCase);
+    private dialog = inject(MatDialog);
+    private translate = inject(TranslateService);
     protected get messages() { return this.chatUseCase.messages; }
     protected get selectedFiles() { return this.chatUseCase.selectedFiles; }
     protected get isRecording() { return this.chatUseCase.isRecording; }
@@ -69,8 +72,6 @@ export class ChatComponent {
         private knowledgeUseCase: KnowledgeUseCase,
         private userService: UserService,
         private authService: AuthService,
-        private dialog: MatDialog,
-        private translate: TranslateService,
         private route: ActivatedRoute
     ) {
         this.watchRouteParams();
@@ -132,6 +133,26 @@ export class ChatComponent {
      */
     protected switchSession(sessionId: string) {
         this.chatUseCase.switchSession(sessionId);
+    }
+
+    /**
+     * 删除会话。
+     * @param event - 点击事件。
+     * @param sessionId - 会话 ID。
+     */
+    protected onDeleteSession(event: Event, sessionId: string) {
+        event.stopPropagation(); // 阻止触发 switchSession
+        
+        const dialogRef = this.dialog.open(DeleteConfirmDialogComponent, {
+            width: '400px',
+            panelClass: 'custom-dialog-container'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result === true) {
+                this.chatUseCase.deleteSession(sessionId);
+            }
+        });
     }
 
     /**

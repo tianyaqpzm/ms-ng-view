@@ -15,7 +15,8 @@ describe('ChatUseCase', () => {
     chatApiMock = {
       getHistory: jest.fn().mockReturnValue(of([])),
       getSessions: jest.fn().mockReturnValue(of([])),
-      sendMessageStream: jest.fn().mockReturnValue(of(''))
+      sendMessageStream: jest.fn().mockReturnValue(of('')),
+      deleteSession: jest.fn().mockReturnValue(of(void 0))
     };
     mediaAdapterMock = {
       getAudioStream: jest.fn(),
@@ -65,5 +66,23 @@ describe('ChatUseCase', () => {
       ['/chat', usecase.activeSessionId()],
       { replaceUrl: true }
     );
+  });
+  
+  it('deleteSession should call API, update sessions, and navigate if active', () => {
+    const sessionId = 'session-to-delete';
+    const mockSessions = [
+      { sessionId: 'session-to-delete', title: 'Deleted', lastActiveTime: '2023-01-01' },
+      { sessionId: 'other-session', title: 'Other', lastActiveTime: '2023-01-02' }
+    ];
+    usecase.chatSessions.set(mockSessions);
+    usecase.activeSessionId.set(sessionId);
+    chatApiMock.deleteSession.mockReturnValue(of(void 0));
+    
+    usecase.deleteSession(sessionId);
+    
+    expect(chatApiMock.deleteSession).toHaveBeenCalledWith(sessionId);
+    expect(usecase.chatSessions()).toEqual([mockSessions[1]]);
+    expect(usecase.activeSessionId()).toBe('');
+    expect(routerMock.navigate).toHaveBeenCalledWith(['/chat']);
   });
 });

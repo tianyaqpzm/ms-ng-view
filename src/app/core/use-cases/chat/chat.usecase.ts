@@ -297,4 +297,27 @@ export class ChatUseCase {
             setTimeout(() => sendMessageCallback(), 0);
         }
     }
+
+    /**
+     * 删除会话。
+     * @param sessionId - 要删除的会话 ID。
+     */
+    deleteSession(sessionId: string) {
+        this.chatApi.deleteSession(sessionId).subscribe({
+            next: () => {
+                // 更新会话列表 Signal
+                this.chatSessions.update(sessions => sessions.filter(s => s.sessionId !== sessionId));
+                
+                // 如果删除的是当前活动会话，则重置状态
+                if (this.activeSessionId() === sessionId) {
+                    this.activeSessionId.set('');
+                    this.messages.set([]);
+                    this.router.navigate(['/chat']);
+                }
+            },
+            error: (err) => {
+                console.error('Failed to delete session', err);
+            }
+        });
+    }
 }
