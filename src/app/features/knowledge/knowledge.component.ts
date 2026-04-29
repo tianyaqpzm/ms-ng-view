@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, Inject, OnInit, signal } from '@angular/core';
+import { Component, inject, Inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
-import { KnowledgeDocument, KnowledgeService, Topic } from '../../core/services/knowledge.service';
+import { Topic } from '../../core/domain/knowledge/knowledge.model';
+import { KnowledgeUseCase } from '../../core/use-cases/knowledge/knowledge.usecase';
 
 @Component({
   selector: 'app-confirm-dialog',
@@ -35,65 +36,34 @@ export class ConfirmDialogComponent {
   templateUrl: './knowledge.component.html'
 })
 export class KnowledgeComponent implements OnInit {
-  private knowledgeService = inject(KnowledgeService);
+  protected useCase = inject(KnowledgeUseCase);
   private dialog = inject(MatDialog);
 
-  topics = signal<Topic[]>([]);
-  documents = signal<KnowledgeDocument[]>([]);
-
-  selectedTopicId = signal<string | null>(null);
+  // UI-only states
   editingTopicId = signal<string | null>(null);
   isCreateModalOpen = signal<boolean>(false);
-  isSubmitting = signal<boolean>(false);
-  isUploading = signal<boolean>(false);
-  searchQuery = signal<string>('');
-
+  
   newTopicName = signal('');
   newTopicDesc = signal('');
   newTopicVisibility = signal('全员公开');
   newTopicTemplate = signal('空白模板');
 
-  selectedTopic = computed(() => {
-    return this.topics().find(t => t.id === this.selectedTopicId()) || (this.topics().length > 0 ? this.topics()[0] : { id: '', name: '无主题', icon: 'Folder', desc: '请先新建主题' });
-  });
-
-  filteredDocuments = computed(() => {
-    const topicId = this.selectedTopicId();
-    const query = this.searchQuery().toLowerCase();
-
-    return this.documents().filter(doc =>
-      doc.topicId === topicId &&
-      doc.title.toLowerCase().includes(query)
-    );
-  });
+  // Delegated states for template access
+  topics = this.useCase.topics;
+  documents = this.useCase.documents;
+  selectedTopicId = this.useCase.selectedTopicId;
+  selectedTopic = this.useCase.selectedTopic;
+  filteredDocuments = this.useCase.filteredDocuments;
+  isSubmitting = this.useCase.isSubmitting;
+  isUploading = this.useCase.isUploading;
+  searchQuery = this.useCase.searchQuery;
 
   ngOnInit() {
-    this.refreshTopics();
+    this.useCase.refreshTopics();
   }
 
-  async refreshTopics() {
-    try {
-      const data = await this.knowledgeService.getTopics();
-      // map description to desc for the UI mapping
-      const mappedTopics = data.map(t => ({ ...t, desc: t.description || t.desc }));
-      this.topics.set(mappedTopics);
-      if (mappedTopics.length > 0 && !this.selectedTopicId()) {
-        this.selectTopic(mappedTopics[0].id!);
-      }
-    } catch (e) {
-      console.error('Failed to load topics', e);
-    }
-  }
-
-  async selectTopic(id: string) {
-    this.selectedTopicId.set(id);
-    this.searchQuery.set('');
-    try {
-      const docs = await this.knowledgeService.getDocuments(id);
-      this.documents.set(docs.map(doc => ({ ...doc, id: String(doc.id) })));
-    } catch (e) {
-      console.error('Failed to load documents', e);
-    }
+  selectTopic(id: string) {
+    this.useCase.selectTopic(id);
   }
 
   openCreateModal() {
@@ -119,34 +89,20 @@ export class KnowledgeComponent implements OnInit {
   async confirmCreate() {
     if (this.isSubmitting() || !this.newTopicName().trim()) return;
 
-    this.isSubmitting.set(true);
-    try {
-      const isEdit = !!this.editingTopicId();
-      const payload = {
-        name: this.newTopicName(),
-        icon: 'Folder',
-        desc: this.newTopicDesc(),
-        description: this.newTopicDesc(),
-        visibleScope: this.newTopicVisibility(),
-        templateName: this.newTopicTemplate()
-      };
+    const payload = {
+      name: this.newTopicName(),
+      icon: 'Folder',
+      desc: this.newTopicDesc(),
+      description: this.newTopicDesc(),
+      visibleScope: this.newTopicVisibility(),
+      templateName: this.newTopicTemplate()
+    };
 
-      if (isEdit) {
-        await this.knowledgeService.updateTopic(this.editingTopicId()!, payload);
-        await this.refreshTopics();
-        this.selectTopic(this.editingTopicId()!);
-      } else {
-        const created = await this.knowledgeService.createTopic(payload);
-        await this.refreshTopics();
-        if (created.id) {
-          this.selectTopic(created.id);
-        }
-      }
+    try {
+      await this.useCase.saveTopic(this.editingTopicId(), payload);
       this.closeCreateModal();
     } catch (e) {
-      console.error(this.editingTopicId() ? 'Failed to update topic' : 'Failed to create topic', e);
-    } finally {
-      this.isSubmitting.set(false);
+      console.error('Failed to save topic', e);
     }
   }
 
@@ -162,12 +118,7 @@ export class KnowledgeComponent implements OnInit {
     dialogRef.afterClosed().subscribe(async (result) => {
       if (result) {
         try {
-          await this.knowledgeService.deleteTopic(id);
-          if (this.selectedTopicId() === id) {
-            this.selectedTopicId.set(null);
-            this.documents.set([]);
-          }
-          await this.refreshTopics();
+          await this.useCase.deleteTopic(id);
         } catch (e) {
           console.error('Failed to delete topic', e);
         }
@@ -180,16 +131,14 @@ export class KnowledgeComponent implements OnInit {
       width: '400px',
       data: {
         title: '删除文档',
-        message: '您确定要彻底删除该文档吗？这将从服务器上永久抹除这个物理文件，如果您已经将本文件进行了向量化索引，索引中的旧切片需要您后续前往重构索引处理。'
+        message: '您确定要彻底删除该文档吗？这将从服务器上永久抹除这个物理文件。'
       }
     });
 
     dialogRef.afterClosed().subscribe(async (result) => {
       if (result) {
         try {
-          await this.knowledgeService.deleteDocument(documentId);
-          // Refresh document list
-          await this.selectTopic(this.selectedTopicId()!);
+          await this.useCase.deleteDocument(documentId);
         } catch (e) {
           console.error('Failed to delete document', e);
         }
@@ -202,22 +151,16 @@ export class KnowledgeComponent implements OnInit {
     const topicId = this.selectedTopicId();
     if (!file || !topicId || this.isUploading()) return;
 
-    this.isUploading.set(true);
     try {
-      await this.knowledgeService.uploadDocument(topicId, file);
-      // reset file input
+      await this.useCase.uploadDocument(topicId, file);
       event.target.value = '';
-      // Refresh documents
-      await this.selectTopic(topicId);
     } catch (e) {
       console.error('Failed to upload document', e);
-    } finally {
-      this.isUploading.set(false);
     }
   }
 
   previewDocument(documentId: string) {
-    const url = this.knowledgeService.getDocumentPreviewUrl(documentId);
+    const url = this.useCase.getDocumentPreviewUrl(documentId);
     window.open(url, '_blank');
   }
 

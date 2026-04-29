@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { KnowledgeService } from '../../core/services/knowledge.service';
+import { KnowledgeUseCase } from '../../core/use-cases/knowledge/knowledge.usecase';
 
 @Component({
   selector: 'app-knowledge-embedding',
@@ -11,13 +11,14 @@ import { KnowledgeService } from '../../core/services/knowledge.service';
   templateUrl: './knowledge-embedding.component.html'
 })
 export class KnowledgeEmbeddingComponent implements OnInit {
-  private knowledgeService = inject(KnowledgeService);
+  private useCase = inject(KnowledgeUseCase);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   // Document context
   documentId = signal<string | null>(null);
   documentName = signal<string>('当前选中知识文档'); // Can load from backend
-
-  // Section: Chunking
+// ... (rest of signals remain same as they are UI-local for this specific form)
   chunkSize = signal<number>(1000);
   chunkOverlap = signal<number>(200);
   separators = signal<{ value: string, label: string, checked: boolean }[]>([
@@ -27,25 +28,17 @@ export class KnowledgeEmbeddingComponent implements OnInit {
     { value: ';', label: '按分号分割 (;)', checked: false },
   ]);
 
-  // Section: Indexing & Model
   embeddingModel = signal<string>('text-embedding-3-small');
   vectorStore = signal<string>('pgvector');
 
-  // Section: Retrieval Strategy
   topK = signal<number>(5);
   scoreThreshold = signal<number>(0.7);
   enableHybridSearch = signal<boolean>(true);
   alphaWeight = signal<number>(0.5); // 0.0=BM25, 1.0=Vector
 
-  // Status
   isBuilding = signal<boolean>(false);
   buildProgress = signal<number>(0);
   buildLogs = signal<string[]>([]);
-
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router
-  ) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -84,7 +77,6 @@ export class KnowledgeEmbeddingComponent implements OnInit {
     this.buildLogs.set(['开始向调度中心提交任务...', '准备加载分块策略与文档元数据...']);
 
     try {
-      // 提取勾选的分隔符
       const selectedSeps = this.separators().filter(s => s.checked).map(s => s.value);
 
       const payload = {
@@ -99,15 +91,14 @@ export class KnowledgeEmbeddingComponent implements OnInit {
         alphaWeight: this.alphaWeight()
       };
 
-      // 异步模拟进度与真实调用的并发
       const progressTimer = setInterval(() => {
         this.buildProgress.update(p => p < 90 ? p + Math.floor(Math.random() * 10) : p);
         if (this.buildProgress() === 30) this.buildLogs.update(logs => [...logs, `传递分隔符并切块 (Size: ${this.chunkSize()})`]);
         if (this.buildProgress() === 60) this.buildLogs.update(logs => [...logs, `向量化并调用: ${this.embeddingModel()}`]);
       }, 500);
 
-      // 发起真正的 API 调用
-      const res = await this.knowledgeService.startIngestTask(this.documentId()!, payload);
+      // Delegate to UseCase (we need to add this method to UseCase)
+      const res = await (this.useCase as any).startIngestTask(this.documentId()!, payload);
 
       clearInterval(progressTimer);
       this.buildProgress.set(100);
