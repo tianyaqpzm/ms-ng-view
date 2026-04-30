@@ -49,7 +49,7 @@
                         <span class="truncate" [title]="session.title">{{ session.title || ('SIDEBAR.NEW_CONVERSATION' |
                             translate) }}</span>
                     </button>
-                    <button mat-icon-button (click)="onDeleteSession($event, session.sessionId)" 
+                    <button mat-icon-button (click)="onDeleteSession($event, session.sessionId)"
                         class="!absolute right-2 top-1/2 -translate-y-1/2 !opacity-0 group-hover:!opacity-100 transition-opacity !w-8 !h-8 text-gray-400 hover:!text-red-500 rounded-full hover:bg-gray-300 dark:hover:bg-[#444746]"
                         [title]="'CHAT.DELETE_SESSION' | translate">
                         <mat-icon class="!text-[18px]">delete_outline</mat-icon>
@@ -136,12 +136,14 @@
             <div class="w-full max-w-4xl space-y-8 pb-32">
 
                 <!-- Welcome Message (Landing Page Style) -->
-                @if (messages().length === 0) {
-                <div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-12 py-12 animate-fade-in">
+                @if (messages().length === 0 && !isCookMode()) {
+                <div
+                    class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-12 py-12 animate-fade-in">
                     <!-- Personalized Greeting -->
                     <div class="space-y-2">
                         <h1 class="text-5xl md:text-6xl font-semibold tracking-tight">
-                            <span class="bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent">
+                            <span
+                                class="bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent">
                                 {{ currentUser()?.name || 'User' }}, 你好
                             </span>
                         </h1>
@@ -155,20 +157,27 @@
                         @for (item of suggestions; track $index) {
                         <button (click)="selectSuggestion(item.text)"
                             class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-[#1e1f20] hover:bg-gray-100 dark:hover:bg-[#2a2b2d] rounded-2xl border border-gray-200 dark:border-[#444746] transition-all duration-300 group text-left">
-                            <div class="w-10 h-10 rounded-xl bg-white dark:bg-[#333537] flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-white dark:bg-[#333537] flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform">
                                 <mat-icon [class.text-blue-500]="item.color === 'blue'"
-                                          [class.text-green-500]="item.color === 'green'"
-                                          [class.text-red-500]="item.color === 'red'"
-                                          [class.text-purple-500]="item.color === 'purple'"
-                                          [class.text-indigo-500]="item.color === 'indigo'"
-                                          [class.text-orange-500]="item.color === 'orange'"
-                                          class="!w-6 !h-6 !text-[24px]">{{ item.icon }}</mat-icon>
+                                    [class.text-green-500]="item.color === 'green'"
+                                    [class.text-red-500]="item.color === 'red'"
+                                    [class.text-purple-500]="item.color === 'purple'"
+                                    [class.text-indigo-500]="item.color === 'indigo'"
+                                    [class.text-orange-500]="item.color === 'orange'" class="!w-6 !h-6 !text-[24px]">{{
+                                    item.icon }}</mat-icon>
                             </div>
-                            <span class="text-sm font-medium text-gray-700 dark:text-[#e3e3e3]">{{ item.text | translate }}</span>
+                            <span class="text-sm font-medium text-gray-700 dark:text-[#e3e3e3]">{{ item.text | translate
+                                }}</span>
                         </button>
                         }
                     </div>
                 </div>
+                }
+
+                <!-- Cook Mode Portal -->
+                @if (messages().length === 0 && isCookMode()) {
+                <app-cook-portal (selectCategory)="selectCookCategory($event)"></app-cook-portal>
                 }
 
                 <!-- Messages Loop -->
@@ -346,10 +355,11 @@
                     @if (selectedTopic()) {
                     <div
                         class="flex items-center gap-1 bg-gray-200 dark:bg-[#333537] text-gray-700 dark:text-[#e3e3e3] px-2 py-1 rounded-md border border-gray-300 dark:border-[#444746] select-none text-xs whitespace-nowrap mb-2.5 shadow-sm">
-                        <mat-icon class="!text-[12px] !flex !items-center !justify-center opacity-70">library_books</mat-icon>
+                        <mat-icon
+                            class="!text-[12px] !flex !items-center !justify-center opacity-70">library_books</mat-icon>
                         <span class="max-w-[100px] truncate" [title]="selectedTopic()!.name">{{ selectedTopic()!.name
                             }}</span>
-                         <button (click)="selectTopic(null)"
+                        <button (click)="selectTopic(null)"
                             class="flex items-center justify-center -mr-1 hover:text-red-500 text-gray-500 dark:text-[#c4c7c5]">
                             <mat-icon class="!text-[12px] !flex !items-center !justify-center">close</mat-icon>
                         </button>
@@ -357,17 +367,27 @@
                     }
 
                     <textarea [(ngModel)]="userInput" (keydown.enter)="$event.preventDefault(); sendMessage()"
-                        [placeholder]="'CHAT.PLACEHOLDER' | translate"
+                        [placeholder]="isCookMode() ? '描述你想吃的或让 AI 为你推荐...' : ('CHAT.PLACEHOLDER' | translate)"
                         class="w-full bg-transparent border-none text-gray-900 dark:text-[#e3e3e3] placeholder-gray-500 dark:placeholder-[#8e918f] resize-none py-3 px-2 max-h-32 focus:ring-0 text-base custom-scrollbar"
                         rows="1" style="min-height: 48px;" #inputField></textarea>
 
                     <div class="flex items-center gap-1 mb-1 mr-1">
+                        <!-- Active Mode Badge (Cook Mode) -->
+                        @if (isCookMode()) {
+                        <div (click)="exitCookMode()"
+                            class="flex items-center gap-2 bg-blue-500/10 text-blue-500 px-3 py-1.5 rounded-full text-sm font-medium border border-blue-500/20 mb-1 animate-fade-in cursor-pointer hover:bg-blue-500/20 transition-colors">
+                            <span>{{ 'COMMON.BACK' | translate }}</span>
+                            <!-- <mat-icon class="!text-[14px] !w-4 !h-4 flex items-center justify-center">close</mat-icon> -->
+                        </div>
+                        }
+
                         <button mat-icon-button
                             class="!flex !items-center !justify-center text-gray-500 dark:text-[#c4c7c5] hover:text-gray-900 dark:hover:text-[#e3e3e3]"
                             *ngIf="!userInput()" (click)="toggleRecording()"
                             [matTooltip]="isRecording() ? 'Stop recording' : 'Use microphone'"
                             [class.text-red-500]="isRecording()" [class.animate-pulse]="isRecording()">
-                            <mat-icon class="!flex !items-center !justify-center">{{ isRecording() ? 'stop_circle' : 'mic' }}</mat-icon>
+                            <mat-icon class="!flex !items-center !justify-center">{{ isRecording() ? 'stop_circle' :
+                                'mic' }}</mat-icon>
                         </button>
                         <button mat-icon-button (click)="sendMessage()"
                             [disabled]="!userInput() && selectedFiles().length === 0"

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { CookPortalComponent } from './components/cook-portal/cook-portal.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
@@ -29,7 +30,8 @@ import { ActivatedRoute } from '@angular/router';
         MatMenuModule,
         MatDividerModule,
         MatDialogModule,
-        TranslateModule
+        TranslateModule,
+        CookPortalComponent
     ],
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
@@ -41,10 +43,11 @@ export class ChatComponent {
 
     protected isSidebarOpen = signal(true);
     protected userInput = signal('');
+    protected isCookMode = signal(false);
     protected suggestions = [
         { icon: 'recommend', text: 'CHAT.SUGGESTIONS.RECOMMEND', color: 'blue' },
         { icon: 'image', text: 'CHAT.SUGGESTIONS.IMAGE', color: 'green' },
-        { icon: 'music_note', text: 'CHAT.SUGGESTIONS.MUSIC', color: 'red' },
+        { icon: 'restaurant', text: 'CHAT.SUGGESTIONS.COOK', color: 'orange' },
         { icon: 'school', text: 'CHAT.SUGGESTIONS.STUDY', color: 'purple' },
         { icon: 'edit', text: 'CHAT.SUGGESTIONS.WRITE', color: 'indigo' },
         { icon: 'bolt', text: 'CHAT.SUGGESTIONS.ENERGY', color: 'orange' }
@@ -163,19 +166,37 @@ export class ChatComponent {
     }
 
     /**
-     * 选择推荐建议，并将其文本填充到输入框。
+     * 选择推荐建议。如果是“今天吃什么”，则开启美食模式。
      * @param suggestionKey - 建议的国际化 Key。
      */
     protected selectSuggestion(suggestionKey: string) {
+        if (suggestionKey === 'CHAT.SUGGESTIONS.COOK') {
+            this.isCookMode.set(true);
+            // 自动选中“菜谱”知识库
+            const recipeTopic = this.topics().find(t => t.name === '菜谱');
+            if (recipeTopic) {
+                this.selectTopic(recipeTopic);
+            }
+            return;
+        }
         const text = this.translate.instant(suggestionKey);
         this.userInput.set(text);
     }
 
     /**
-     * 执行登出操作。
+     * 选择菜系分类。
+     * @param categoryName - 菜系名称。
      */
-    protected logout() {
-        this.authService.logout();
+    protected selectCookCategory(categoryName: string) {
+        this.userInput.set(`推荐几道好吃的${categoryName}`);
+        this.sendMessage();
+    }
+
+    /**
+     * 退出美食模式。
+     */
+    protected exitCookMode() {
+        this.isCookMode.set(false);
     }
 
     /**

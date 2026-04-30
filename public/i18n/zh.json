@@ -35,7 +35,7 @@
     "SUGGESTIONS": {
       "RECOMMEND": "为你推荐",
       "IMAGE": "制作图片",
-      "MUSIC": "创作音乐",
+      "COOK": "今天吃什么",
       "STUDY": "帮我学习",
       "WRITE": "随便写点什么",
       "ENERGY": "给我的一天注入活力"
@@ -63,6 +63,7 @@
     "DONE": "完成"
   },
   "COMMON": {
+    "BACK": "返回",
     "CANCEL": "取消",
     "DELETE": "删除"
   }

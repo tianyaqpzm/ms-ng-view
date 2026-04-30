@@ -35,7 +35,7 @@
     "SUGGESTIONS": {
       "RECOMMEND": "Recommend for you",
       "IMAGE": "Create an image",
-      "MUSIC": "Create music",
+      "COOK": "What to eat today?",
       "STUDY": "Help me study",
       "WRITE": "Write something",
       "ENERGY": "Energize my day"
@@ -63,6 +63,7 @@
     "DONE": "Done"
   },
   "COMMON": {
+    "BACK": "Back",
     "CANCEL": "Cancel",
     "DELETE": "Delete"
   }
