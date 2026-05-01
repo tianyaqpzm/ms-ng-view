@@ -16,7 +16,7 @@
     "WELCOME": "{{name}}，你好",
     "SUBTITLE": "今天我可以如何帮助你管理时间？",
     "PLACEHOLDER": "问我任何问题...",
-    "DISCLAIMER": "AI 可能会显示不准确的信息，请核实其回答。",
+    "DISCLAIMER": "作为一款 AI 工具，其回答未必正确无误",
     "RETRY": "响应失败，点击重发",
     "EDIT": "修改此问题",
     "COPY_TEXT": "复制文本",

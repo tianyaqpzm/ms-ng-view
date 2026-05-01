@@ -38,6 +38,9 @@ import { URLConfig } from '@/app/core/constants/url.config';
     ],
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
+    host: {
+        class: 'block h-full w-full overflow-hidden'
+    },
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChatComponent {

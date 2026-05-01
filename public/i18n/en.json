@@ -16,7 +16,7 @@
     "WELCOME": "Hello, {{name}}",
     "SUBTITLE": "How can I help you manage your time today?",
     "PLACEHOLDER": "Ask anything...",
-    "DISCLAIMER": "AI may display inaccurate info, including about people, so double-check its responses.",
+    "DISCLAIMER": "As an AI tool, its responses may not always be accurate.",
     "RETRY": "Response failed, click to retry",
     "EDIT": "Edit this question",
     "COPY_TEXT": "Copy text",
