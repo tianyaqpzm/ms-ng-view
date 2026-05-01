@@ -13,7 +13,7 @@
     "DELETE_CONFIRM": "确定要删除这个会话及其所有聊天记录吗？此操作不可恢复。"
   },
   "CHAT": {
-    "WELCOME": "你好，旅行者",
+    "WELCOME": "{{name}}，你好",
     "SUBTITLE": "今天我可以如何帮助你管理时间？",
     "PLACEHOLDER": "问我任何问题...",
     "DISCLAIMER": "AI 可能会显示不准确的信息，请核实其回答。",
@@ -65,6 +65,63 @@
   "COMMON": {
     "BACK": "返回",
     "CANCEL": "取消",
-    "DELETE": "删除"
+    "DELETE": "删除",
+    "SAVE": "保存",
+    "SAVING": "正在保存..."
+  },
+  "KNOWLEDGE": {
+    "TITLE": "知识空间",
+    "SUBTITLE": "企业级文档与资料管理",
+    "NEW_TOPIC": "新建专题",
+    "EDIT_TOPIC": "重命名专题",
+    "DELETE_TOPIC": "删除专题",
+    "SEARCH_PLACEHOLDER": "在当前专题内搜索文档...",
+    "IMPORT_DOC": "导入文档",
+    "IMPORTING": "正在导入...",
+    "NEW_DOC": "新建文档",
+    "EMPTY": {
+      "TITLE": "未查找到相关文档",
+      "SUBTITLE": "尝试更换搜索词或在当前专题新建文档"
+    },
+    "TABLE": {
+      "TITLE": "标题",
+      "STATUS": "状态",
+      "AUTHOR": "作者",
+      "UPDATE_TIME": "更新时间",
+      "ACTIONS": "操作",
+      "PREVIEW": "预览",
+      "CONFIG": "配置"
+    },
+    "STATUS": {
+      "IN_PROGRESS": "进行中",
+      "REVIEWED": "已审阅",
+      "PUBLISHED": "已发布"
+    },
+    "DELETE_CONFIRM": {
+      "TOPIC_TITLE": "删除专题",
+      "TOPIC_MSG": "您确定要删除该专题吗？这将一并删除该专题归属下的所有文档元数据记录，且不可恢复！",
+      "DOC_TITLE": "删除文档",
+      "DOC_MSG": "您确定要彻底删除该文档吗？这将从服务器上永久抹除这个物理文件。"
+    },
+    "MODAL": {
+      "TITLE_CREATE": "新建知识专题",
+      "TITLE_EDIT": "编辑知识专题",
+      "NAME": "专题名称",
+      "NAME_PLACEHOLDER": "输入专题名称，如 'AI 技术预研'",
+      "DESC": "专题描述",
+      "DESC_PLACEHOLDER": "简要描述该专题的目标或包含的内容",
+      "VISIBILITY": "可见范围",
+      "VISIBILITY_PARTICIPANTS": "仅参与者可见",
+      "VISIBILITY_PRIVATE": "私密",
+      "TEMPLATE": "选择模板",
+      "VISIBILITY_PUBLIC": "全员公开",
+      "TEMPLATE_BLANK": "空白模板",
+      "TEMPLATE_R_D": "研发专项模板",
+      "TEMPLATE_MARKET": "市场调研模板",
+      "SAVE": "确定",
+      "SAVE_CREATE": "确认创建",
+      "SAVE_EDIT": "确认修改",
+      "CANCEL": "取消"
+    }
   }
 }

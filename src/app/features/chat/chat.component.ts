@@ -14,9 +14,12 @@ import { KnowledgeUseCase } from '../../core/use-cases/knowledge/knowledge.useca
 import { Topic } from '../../core/domain/knowledge/knowledge.model';
 import { UserService } from '../../core/services/user.service';
 import { AuthService } from '../../core/services/auth.service';
-import { SettingsDialogComponent } from './settings-dialog.component';
+import { SettingsDialogComponent } from '../../shared/components/settings-dialog/settings-dialog.component';
 import { ChatUseCase } from '../../core/use-cases/chat/chat.usecase';
 import { ActivatedRoute } from '@angular/router';
+import { SidebarService } from '../../core/services/sidebar.service';
+import { environment } from '@/environments/environment';
+import { URLConfig } from '@/app/core/constants/url.config';
 
 @Component({
     selector: 'app-chat',
@@ -41,7 +44,8 @@ export class ChatComponent {
     @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
     @ViewChild('canvasElement') canvasElement!: ElementRef<HTMLCanvasElement>;
 
-    protected isSidebarOpen = signal(true);
+    private sidebarService = inject(SidebarService);
+    protected get isSidebarOpen() { return this.sidebarService.isOpen; }
     protected userInput = signal('');
     protected isCookMode = signal(false);
     protected suggestions = [
@@ -162,7 +166,7 @@ export class ChatComponent {
      * 切换历史记录侧边栏的展开/收起状态。
      */
     protected toggleSidebar() {
-        this.isSidebarOpen.update(v => !v);
+        this.sidebarService.toggle();
     }
 
     /**
@@ -213,7 +217,7 @@ export class ChatComponent {
      * 跳转至外部账号中心。
      */
     protected openAccountManagement() {
-        window.open('https://tao-lan.122577.xyz:8381/account', '_blank');
+        window.open(`${environment.VITE_CASDOOR_URL}${URLConfig.EXTERNAL.CASDOOR_ACCOUNT}`, '_blank');
     }
 
     /**

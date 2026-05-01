@@ -1,4 +1,4 @@
-import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
+import { Component, signal, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -7,7 +7,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { TranslateModule } from '@ngx-translate/core';
-import { ThemeService } from '../../core/services/theme.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 /**
  * 设置对话框。
@@ -34,7 +34,7 @@ export class SettingsDialogComponent {
   protected enterToSend = signal(true);
   
   /** 是否为深色模式 */
-  protected get isDarkMode() { return this.themeService.isDarkMode; }
+  protected isDarkMode = computed(() => this.themeService.isDarkMode());
 
   /**
    * 构造函数。

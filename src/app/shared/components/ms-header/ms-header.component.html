@@ -1,0 +1,76 @@
+@if (shouldShow()) {
+<header
+    class="flex-shrink-0 flex items-center justify-between px-6 h-14 bg-white/80 dark:bg-[#1e1f20]/80 backdrop-blur-md border-b border-gray-200 dark:border-[#444746] z-50">
+    <!-- Left: Sidebar Toggle + App Brand -->
+    <div class="flex items-center gap-2">
+        <button *ngIf="showSidebarToggle()" (click)="toggleSidebar()" 
+            class="mr-2 flex items-center justify-center w-9 h-9 rounded-full text-gray-500 dark:text-[#c4c7c5] hover:bg-gray-100 dark:hover:bg-[#333537] transition-colors">
+            <mat-icon>menu</mat-icon>
+        </button>
+        <div class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 via-purple-400 to-red-400"></div>
+        <span class="font-semibold text-sm tracking-tight text-gray-800 dark:text-[#e3e3e3]">ms-ng-view AI</span>
+    </div>
+
+    <!-- Right: Theme + Lang + User -->
+    <div class="flex items-center gap-2">
+        <!-- Language Toggle -->
+        <button (click)="toggleLanguage()" [matTooltip]="currentLang() === 'zh' ? 'Switch to English' : '切换到中文'"
+            class="flex items-center justify-center w-9 h-9 rounded-full text-gray-500 dark:text-[#c4c7c5] hover:bg-gray-100 dark:hover:bg-[#333537] transition-colors">
+            <span class="text-[14px] font-medium">{{ currentLang() === 'zh' ? 'EN' : '中' }}</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button (click)="toggleTheme()"
+            [matTooltip]="isDarkMode() ? ('THEME.SWITCH_TO_LIGHT' | translate) : ('THEME.SWITCH_TO_DARK' | translate)"
+            class="flex items-center justify-center w-9 h-9 rounded-full text-gray-500 dark:text-[#c4c7c5] hover:bg-gray-100 dark:hover:bg-[#333537] transition-colors">
+            <mat-icon class="!text-[20px] !w-5 !h-5">{{ isDarkMode() ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        </button>
+
+        <!-- User Profile Button -->
+        @if (currentUser()) {
+        <button [matMenuTriggerFor]="globalProfileMenu"
+            class="flex items-center justify-center rounded-full hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600 transition-all focus:outline-none ml-1">
+            @if (currentUser()!.avatar) {
+            <img [src]="currentUser()!.avatar" class="w-8 h-8 rounded-full object-cover">
+            } @else {
+            <div
+                class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium text-sm">
+                {{ currentUser()!.name?.charAt(0)?.toUpperCase() || 'U' }}
+            </div>
+            }
+        </button>
+
+        <!-- Global Profile Menu -->
+        <mat-menu #globalProfileMenu="matMenu" class="mt-2 !rounded-xl !shadow-xl">
+            <div class="px-4 py-3 flex flex-col items-center border-b border-gray-100 dark:border-[#444746] mb-1">
+                @if (currentUser()!.avatar) {
+                <img [src]="currentUser()!.avatar" class="w-12 h-12 rounded-full object-cover mb-2">
+                } @else {
+                <div
+                    class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium text-lg mb-2">
+                    {{ currentUser()!.name?.charAt(0)?.toUpperCase() || 'U' }}
+                </div>
+                }
+                <span class="text-sm font-semibold text-gray-900 dark:text-[#e3e3e3] truncate max-w-full">{{
+                    currentUser()!.name }}</span>
+                <span class="text-xs text-gray-500 dark:text-[#8e918f] truncate max-w-full">{{ 'USER.IDENTITY' |
+                    translate }}</span>
+            </div>
+            <button mat-menu-item (click)="openSettings()">
+                <mat-icon class="text-gray-500">settings</mat-icon>
+                <span>{{ 'USER.PROFILE_SETTINGS' | translate }}</span>
+            </button>
+            <button mat-menu-item (click)="openAccountManagement()">
+                <mat-icon class="text-gray-500">account_circle</mat-icon>
+                <span>{{ 'USER.ACCOUNT_MGMT' | translate }}</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button mat-menu-item class="!text-red-500" (click)="logout()">
+                <mat-icon class="!text-red-500">exit_to_app</mat-icon>
+                <span>{{ 'USER.LOGOUT' | translate }}</span>
+            </button>
+        </mat-menu>
+        }
+    </div>
+</header>
+}

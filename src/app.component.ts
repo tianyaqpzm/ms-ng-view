@@ -12,6 +12,7 @@ import { UserProfile, UserService } from './app/core/services/user.service';
 
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from './app/core/services/language.service';
+import { MsHeaderComponent } from './app/shared/components/ms-header/ms-header.component';
 
 @Component({
     selector: 'app-root',
@@ -25,6 +26,7 @@ import { LanguageService } from './app/core/services/language.service';
         MatMenuModule,
         MatDividerModule,
         TranslateModule,
+        MsHeaderComponent,
     ],
     templateUrl: './app.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush

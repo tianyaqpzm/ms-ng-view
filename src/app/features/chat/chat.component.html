@@ -72,64 +72,6 @@
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-full relative">
 
-        <!-- Header (Mobile/Collapsed Sidebar Trigger) & Top Right Actions -->
-        <header class="absolute top-0 left-0 w-full p-4 z-10 flex justify-between items-center pointer-events-none">
-            <!-- Left Side (Sidebar Trigger) -->
-            <div class="pointer-events-auto">
-                <button *ngIf="!isSidebarOpen()" mat-icon-button (click)="toggleSidebar()"
-                    class="text-gray-500 dark:text-[#c4c7c5] hover:bg-gray-200 dark:hover:bg-[#333537] rounded-full bg-white/50 dark:bg-[#1e1f20]/50 backdrop-blur-sm shadow-sm transition-all">
-                    <mat-icon>menu</mat-icon>
-                </button>
-            </div>
-
-            <!-- Right Side (User Profile & Setup) -->
-            <div class="pointer-events-auto">
-                @if (currentUser()) {
-                <button [matMenuTriggerFor]="profileMenu"
-                    class="flex items-center justify-center rounded-full hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600 transition-all focus:outline-none">
-                    @if (currentUser()!.avatar) {
-                    <img [src]="currentUser()!.avatar" class="w-9 h-9 rounded-full object-cover">
-                    } @else {
-                    <div
-                        class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium text-sm">
-                        {{ currentUser()!.name?.charAt(0)?.toUpperCase() || 'U' }}
-                    </div>
-                    }
-                </button>
-                <!-- Settings Menu -->
-                <mat-menu #profileMenu="matMenu" class="mt-2 min-w-[200px] !rounded-xl !shadow-xl">
-                    <div
-                        class="px-4 py-3 flex flex-col items-center border-b border-gray-100 dark:border-[#444746] mb-1">
-                        @if (currentUser()!.avatar) {
-                        <img [src]="currentUser()!.avatar" class="w-12 h-12 rounded-full object-cover mb-2">
-                        } @else {
-                        <div
-                            class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium text-lg mb-2">
-                            {{ currentUser()!.name?.charAt(0)?.toUpperCase() || 'U' }}
-                        </div>
-                        }
-                        <span class="text-sm font-semibold text-gray-900 dark:text-[#e3e3e3] truncate max-w-full">{{
-                            currentUser()!.name }}</span>
-                        <span class="text-xs text-gray-500 dark:text-[#8e918f] truncate max-w-full">{{ 'USER.IDENTITY' |
-                            translate }}</span>
-                    </div>
-                    <button mat-menu-item (click)="openSettings()">
-                        <mat-icon class="text-gray-500">settings</mat-icon>
-                        <span>{{ 'USER.PROFILE_SETTINGS' | translate }}</span>
-                    </button>
-                    <button mat-menu-item (click)="openAccountManagement()">
-                        <mat-icon class="text-gray-500">account_circle</mat-icon>
-                        <span>{{ 'USER.ACCOUNT_MGMT' | translate }}</span>
-                    </button>
-                    <mat-divider></mat-divider>
-                    <button mat-menu-item class="!text-red-500" (click)="logout()">
-                        <mat-icon class="!text-red-500">exit_to_app</mat-icon>
-                        <span>{{ 'USER.LOGOUT' | translate }}</span>
-                    </button>
-                </mat-menu>
-                }
-            </div>
-        </header>
 
         <!-- Chat Area -->
         <div class="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col items-center">
@@ -144,11 +86,11 @@
                         <h1 class="text-5xl md:text-6xl font-semibold tracking-tight">
                             <span
                                 class="bg-gradient-to-r from-blue-500 via-purple-500 to-red-500 bg-clip-text text-transparent">
-                                {{ currentUser()?.name || 'User' }}, 你好
+                                {{ 'CHAT.WELCOME' | translate: { name: currentUser()?.name || 'User' } }}
                             </span>
                         </h1>
                         <p class="text-2xl md:text-3xl text-gray-400 dark:text-[#8e918f] font-medium">
-                            今天想聊点什么?
+                            {{ 'CHAT.SUBTITLE' | translate }}
                         </p>
                     </div>
 

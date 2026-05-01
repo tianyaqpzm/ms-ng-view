@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { environment } from '@/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -108,6 +109,6 @@ export class AuthService {
     
     // 2. 跳转到网关的退出接口
     // 网关会负责清除后端会话并重定向回登录页
-    window.location.href = '/logout';
+    window.location.href = `${environment.VITE_GATEWAY_URL}/logout`;
   }
 }
