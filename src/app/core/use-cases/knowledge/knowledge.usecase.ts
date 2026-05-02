@@ -2,6 +2,11 @@ import { Injectable, inject, signal, computed } from '@angular/core';
 import { KnowledgeApiAdapter } from '../../adapters/knowledge/knowledge-api.adapter';
 import { KnowledgeDocument, Topic } from '../../domain/knowledge/knowledge.model';
 
+/**
+ * 知识库业务用例层 (Use Case)
+ * 负责编排知识库主题（Topic）与文档（Document）的业务逻辑。
+ * 维护全局共享的知识库状态（Signals）。
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -9,12 +14,18 @@ export class KnowledgeUseCase {
   private adapter = inject(KnowledgeApiAdapter);
 
   // State
+  /** 所有的主题列表 */
   topics = signal<Topic[]>([]);
+  /** 当前选定主题下的文档列表 */
   documents = signal<KnowledgeDocument[]>([]);
+  /** 当前选定的主题 ID */
   selectedTopicId = signal<string | null>(null);
   
+  /** 提交中状态 */
   isSubmitting = signal<boolean>(false);
+  /** 上传中状态 */
   isUploading = signal<boolean>(false);
+  /** 搜索关键词 */
   searchQuery = signal<string>('');
 
   // Computed

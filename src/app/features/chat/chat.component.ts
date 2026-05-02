@@ -21,6 +21,15 @@ import { SidebarService } from '../../core/services/sidebar.service';
 import { environment } from '@/environments/environment';
 import { URLConfig } from '@/app/core/constants/url.config';
 
+/**
+ * AI 聊天主组件
+ * 核心功能：
+ * 1. 处理用户输入（文本、语音、文件、摄像头截图）。
+ * 2. 管理会话历史与切换。
+ * 3. 集成 RAG 知识库主题选择。
+ * 4. 驱动流式对话展示与消息交互（编辑、重试、评分、导出）。
+ * 5. 特色模式：美食助手 (Cook Mode) 自动路由。
+ */
 @Component({
     selector: 'app-chat',
     standalone: true,
