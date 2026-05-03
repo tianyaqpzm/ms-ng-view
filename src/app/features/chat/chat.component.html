@@ -14,18 +14,6 @@
         [class.overflow-hidden]="!isSidebarOpen()">
 
         <div class="p-4 h-full flex flex-col w-72">
-            <div class="flex items-center justify-between mb-6">
-                <button mat-icon-button (click)="toggleSidebar()">
-                    <mat-icon>menu</mat-icon>
-                </button>
-                <div class="flex items-center gap-2" *ngIf="isSidebarOpen()">
-                    <div
-                        class="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-red-500 flex items-center justify-center">
-                        <mat-icon class="text-white !text-[12px]">auto_awesome</mat-icon>
-                    </div>
-                    <span class="text-lg font-medium tracking-tight">ms-ng-view</span>
-                </div>
-            </div>
 
             <div class="flex-1 overflow-y-auto space-y-2">
                 <div
@@ -129,13 +117,13 @@
                     <!-- Model Icon -->
                     @if (msg.role === 'model') {
                     <div
-                        class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-red-500 flex items-center justify-center flex-shrink-0 mt-1">
+                        class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#4285f4] via-[#9b72cb] to-[#d96570] flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
                         <mat-icon
                             class="text-white text-sm w-4 h-4 !text-[16px] !w-4 !h-4 flex items-center justify-center">auto_awesome</mat-icon>
                     </div>
                     }
 
-                    <div class="max-w-[80%] md:max-w-[70%] flex gap-2 group/msg"
+                    <div class="max-w-[90%] md:max-w-[80%] flex gap-2 group/msg"
                         [ngClass]="msg.role === 'user' ? 'items-center' : 'items-start'">
                         @if (msg.role === 'user') {
                         <!-- action toolbar -->
@@ -180,7 +168,7 @@
                                     <div class="gemini-dot"></div>
                                 </div>
                                 }
-                                {{ msg.content }}
+                                <markdown [data]="msg.content"></markdown>
                             </div>
 
                             <!-- Response Toolbar -->
@@ -308,7 +296,8 @@
                     </div>
                     }
 
-                    <textarea [(ngModel)]="userInput" (keydown.enter)="$event.preventDefault(); sendMessage()"
+                    <textarea [(ngModel)]="userInput" [ngModelOptions]="{ debounce: 300 }"
+                        (keydown.enter)="$event.preventDefault(); sendMessage(inputField.value)"
                         [placeholder]="isCookMode() ? '描述你想吃的或让 AI 为你推荐...' : ('CHAT.PLACEHOLDER' | translate)"
                         class="w-full bg-transparent border-none text-gray-900 dark:text-[#e3e3e3] placeholder-gray-500 dark:placeholder-[#8e918f] resize-none py-3 px-2 max-h-32 focus:ring-0 text-base custom-scrollbar"
                         rows="1" style="min-height: 48px;" #inputField></textarea>
@@ -331,11 +320,12 @@
                             <mat-icon class="!flex !items-center !justify-center">{{ isRecording() ? 'stop_circle' :
                                 'mic' }}</mat-icon>
                         </button>
-                        <button mat-icon-button (click)="sendMessage()"
-                            [disabled]="!userInput() && selectedFiles().length === 0"
+                        <button mat-icon-button (click)="isThinking() ? stopMessage() : sendMessage(inputField.value)"
+                            [disabled]="!isThinking() && !userInput() && selectedFiles().length === 0"
                             class="!flex !items-center !justify-center transition-all duration-200"
-                            [ngClass]="(userInput() || selectedFiles().length > 0) ? 'text-white bg-[#004a77] hover:bg-[#005c94]' : 'text-gray-400 dark:text-[#444746]'">
-                            <mat-icon class="!flex !items-center !justify-center">send</mat-icon>
+                            [ngClass]="(isThinking() || userInput() || selectedFiles().length > 0) ? 'text-white bg-[#004a77] hover:bg-[#005c94]' : 'text-gray-400 dark:text-[#444746]'">
+                            <mat-icon class="!flex !items-center !justify-center">{{ isThinking() ? 'pause' : 'send'
+                                }}</mat-icon>
                         </button>
                     </div>
                 </div>

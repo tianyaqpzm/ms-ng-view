@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { ChatMessage, ChatSessionDto } from '../../domain/chat/chat.model';
 import { ChatApiAdapter } from '../../adapters/chat/chat-api.adapter';
 import { MediaDeviceAdapter } from '../../adapters/device/media-device.adapter';
@@ -21,6 +22,8 @@ export class ChatUseCase {
     public isCameraOpen = signal(false);
     public selectedFiles = signal<File[]>([]);
     public responseRatings = signal<Map<number, 'good' | 'bad'>>(new Map());
+
+    private currentSubscription: Subscription | null = null;
 
     private mediaStream: MediaStream | null = null;
     private cameraStream: MediaStream | null = null;
@@ -199,7 +202,7 @@ export class ChatUseCase {
      */
     sendMessage(content: string, topicId: string | null, translateInstant: (key: string) => string) {
         const files = this.selectedFiles();
-        if (!content && files.length === 0) return;
+        if ((!content && files.length === 0) || this.isThinking()) return;
 
         // 延迟生成 Session ID：只有在发送消息时如果没有 ID 才生成并同步 URL
         if (!this.activeSessionId()) {
@@ -221,7 +224,7 @@ export class ChatUseCase {
 
         this.isThinking.set(true);
 
-        this.chatApi.sendMessageStream(this.activeSessionId(), fullContent, topicId).subscribe({
+        this.currentSubscription = this.chatApi.sendMessageStream(this.activeSessionId(), fullContent, topicId).subscribe({
             next: (partialContent) => {
                 this.isThinking.set(false);
                 this.messages.update(msgs => {
@@ -234,6 +237,7 @@ export class ChatUseCase {
             },
             error: (error) => {
                 this.isThinking.set(false);
+                this.currentSubscription = null;
                 console.error('Chat error:', error);
                 this.messages.update(msgs => {
                     const newMsgs = [...msgs];
@@ -244,11 +248,23 @@ export class ChatUseCase {
                 });
             },
             complete: () => {
+                this.currentSubscription = null;
                 if (aiMsgIndex === 1) {
                     this.refreshSessionsListSilently();
                 }
             }
         });
+    }
+
+    /**
+     * 停止当前消息的生成。
+     */
+    stopMessage() {
+        if (this.currentSubscription) {
+            this.currentSubscription.unsubscribe();
+            this.currentSubscription = null;
+        }
+        this.isThinking.set(false);
     }
 
     /**

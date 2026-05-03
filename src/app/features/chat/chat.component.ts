@@ -1,25 +1,26 @@
+import { URLConfig } from '@/app/core/constants/url.config';
+import { environment } from '@/environments/environment';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, ElementRef, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { CookPortalComponent } from './components/cook-portal/cook-portal.component';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatDividerModule } from '@angular/material/divider';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { DeleteConfirmDialogComponent } from './delete-confirm-dialog.component';
-import { KnowledgeUseCase } from '../../core/use-cases/knowledge/knowledge.usecase';
-import { Topic } from '../../core/domain/knowledge/knowledge.model';
-import { UserService } from '../../core/services/user.service';
-import { AuthService } from '../../core/services/auth.service';
-import { SettingsDialogComponent } from '../../shared/components/settings-dialog/settings-dialog.component';
-import { ChatUseCase } from '../../core/use-cases/chat/chat.usecase';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { MarkdownComponent } from 'ngx-markdown';
+import { Topic } from '../../core/domain/knowledge/knowledge.model';
+import { AuthService } from '../../core/services/auth.service';
 import { SidebarService } from '../../core/services/sidebar.service';
-import { environment } from '@/environments/environment';
-import { URLConfig } from '@/app/core/constants/url.config';
+import { UserService } from '../../core/services/user.service';
+import { ChatUseCase } from '../../core/use-cases/chat/chat.usecase';
+import { KnowledgeUseCase } from '../../core/use-cases/knowledge/knowledge.usecase';
+import { SettingsDialogComponent } from '../../shared/components/settings-dialog/settings-dialog.component';
+import { CookPortalComponent } from './components/cook-portal/cook-portal.component';
+import { DeleteConfirmDialogComponent } from './delete-confirm-dialog.component';
 
 /**
  * AI 聊天主组件
@@ -43,6 +44,7 @@ import { URLConfig } from '@/app/core/constants/url.config';
         MatDividerModule,
         MatDialogModule,
         TranslateModule,
+        MarkdownComponent,
         CookPortalComponent
     ],
     templateUrl: './chat.component.html',
@@ -172,13 +174,6 @@ export class ChatComponent {
                 this.chatUseCase.deleteSession(sessionId);
             }
         });
-    }
-
-    /**
-     * 切换历史记录侧边栏的展开/收起状态。
-     */
-    protected toggleSidebar() {
-        this.sidebarService.toggle();
     }
 
     /**
@@ -333,6 +328,13 @@ export class ChatComponent {
     }
 
     /**
+     * 停止当前消息生成。
+     */
+    protected stopMessage() {
+        this.chatUseCase.stopMessage();
+    }
+
+    /**
      * 对 AI 回复进行点赞/点踩评分。
      * @param index - 消息索引。
      * @param rating - 'good' 或 'bad'。
@@ -378,8 +380,9 @@ export class ChatComponent {
     /**
      * 发送当前输入的消息内容。
      */
-    protected sendMessage() {
-        this.chatUseCase.sendMessage(this.userInput().trim(), this.selectedTopic()?.id || null, (key) => this.translate.instant(key));
+    protected sendMessage(explicitValue?: string) {
+        const content = explicitValue !== undefined ? explicitValue : this.userInput();
+        this.chatUseCase.sendMessage(content.trim(), this.selectedTopic()?.id || null, (key) => this.translate.instant(key));
         this.userInput.set('');
     }
 }

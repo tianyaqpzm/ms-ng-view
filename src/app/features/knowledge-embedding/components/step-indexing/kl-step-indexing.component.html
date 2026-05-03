@@ -20,6 +20,7 @@
       <div class="relative">
         <select [ngModel]="embeddingModel()" (ngModelChange)="onModelChange($event)"
           class="w-full px-4 py-2 border border-neutral-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm appearance-none bg-neutral-50 dark:bg-background-dark text-neutral-900 dark:text-white transition-colors">
+          <option value="gemini-embedding-2">gemini-embedding-2 (Google, 默认高精度)</option>
           <option value="text-embedding-3-small">text-embedding-3-small (OpenAI)</option>
           <option value="text-embedding-3-large">text-embedding-3-large (OpenAI)</option>
           <option value="bge-large-zh-v1.5">bge-large-zh-v1.5 (Local, 推理加速)</option>

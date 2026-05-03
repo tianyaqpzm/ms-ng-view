@@ -23,6 +23,7 @@ trigger: always_on
 2. **数据隔离**: UI 组件严禁直接调用 API，必须通过 `ChatUseCase` (Use Case 层) 编排。
 3. **样式转义**: Tailwind 的重要性修饰符 `!` 在 CSS 中必须转义为 `.\!`。
 4. **测试规范**: 针对 Signals 的单元测试，Mock 对象必须显式提供 `signal(value)`。
+5. **Markdown 渲染**: 统一使用 `ngx-markdown` 处理 AI 回复。需在 `main.ts` 中配置 `provideMarkdown()`，并确保 `chat.component.css` 中包含对 `::ng-deep` 元素的样式定义。
 
 # Key Context (关键背景)
 前端服务 (`ms-ng-view`) 直接与网关 (`ms-java-gateway`) 交互。负责页面渲染、数据可视化与用户交互逻辑，支持流式对话展示与插件动态管理。

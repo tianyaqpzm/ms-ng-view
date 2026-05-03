@@ -40,29 +40,34 @@
     <!-- Horizontal Flowchart -->
     <div class="mb-10 relative">
       <div class="flex items-center justify-between relative z-10">
-        <div *ngFor="let step of steps; let i = index" class="flex flex-col items-center group relative flex-1">
+        @for (step of steps; track step.id; let i = $index) {
+        <div class="flex flex-col items-center group relative flex-1">
           <!-- Connector Line -->
-          <div *ngIf="i < steps.length - 1"
-            class="absolute top-5 left-[50%] right-[-50%] h-0.5 bg-neutral-200 dark:bg-white/10 z-0">
+          @if (i < steps.length - 1) {
+          <div class="absolute top-5 left-[50%] right-[-50%] h-0.5 bg-neutral-200 dark:bg-white/10 z-0">
             <div class="h-full bg-primary transition-all duration-500"
               [style.width]="currentStep() > step.id ? '100%' : '0%'"></div>
           </div>
+          }
 
           <!-- Step Circle -->
           <button (click)="currentStep.set(step.id)"
-            [class.border-primary]="currentStep() >= step.id"
-            [class.bg-primary]="currentStep() >= step.id"
-            [class.text-white]="currentStep() >= step.id"
+            [class.!border-green-500]="currentStep() > step.id"
+            [class.!bg-white]="currentStep() > step.id"
+            [class.!text-green-500]="currentStep() > step.id"
+            [class.!border-primary]="currentStep() === step.id"
+            [class.!bg-primary]="currentStep() === step.id"
+            [class.!text-white]="currentStep() === step.id"
             [class.scale-110]="currentStep() === step.id"
             [class.shadow-lg]="currentStep() === step.id"
-            [ngClass]="{'shadow-primary/30': currentStep() === step.id}"
+            [ngClass]="{'shadow-primary/30': currentStep() === step.id, 'shadow-green-500/10': currentStep() > step.id}"
             class="w-10 h-10 rounded-full border-2 border-neutral-300 dark:border-white/20 bg-white dark:bg-surface-dark flex items-center justify-center mb-3 transition-all duration-300 z-10 relative">
-            <span *ngIf="currentStep() <= step.id" class="text-sm font-bold">{{ step.id }}</span>
-            <svg *ngIf="currentStep() > step.id" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
+            
+            @if (currentStep() > step.id) {
+              <mat-icon class="!text-[24px] !text-green-500">check</mat-icon>
+            } @else {
+              <span class="text-sm font-bold">{{ step.id }}</span>
+            }
           </button>
 
           <!-- Step Title & Info -->
@@ -92,67 +97,76 @@
             </div>
           </div>
         </div>
+        }
       </div>
     </div>
 
     <div class="space-y-6">
 
-      <!-- Step 1: Data Preparation -->
-      <app-kl-step-preparation *ngIf="currentStep() === 1"
+      @if (currentStep() === 1) {
+      <app-kl-step-preparation
         [chunkSize]="chunkSize()" (chunkSizeChange)="chunkSize.set($event)"
         [chunkOverlap]="chunkOverlap()" (chunkOverlapChange)="chunkOverlap.set($event)"
         [separators]="separators()" (separatorsChange)="separators.set($event)"
         class="block animate-in fade-in slide-in-from-bottom-4 duration-300">
       </app-kl-step-preparation>
+      }
 
-      <!-- Step 2: Indexing -->
-      <app-kl-step-indexing *ngIf="currentStep() === 2"
+      @if (currentStep() === 2) {
+      <app-kl-step-indexing
         [embeddingModel]="embeddingModel()" (embeddingModelChange)="embeddingModel.set($event)"
         [vectorStore]="vectorStore()" (vectorStoreChange)="vectorStore.set($event)"
         class="block animate-in fade-in slide-in-from-bottom-4 duration-300">
       </app-kl-step-indexing>
+      }
 
-      <!-- Step 3: Retrieval Strategy -->
-      <app-kl-step-retrieval *ngIf="currentStep() === 3"
+      @if (currentStep() === 3) {
+      <app-kl-step-retrieval
         [topK]="topK()" (topKChange)="topK.set($event)"
         [scoreThreshold]="scoreThreshold()" (scoreThresholdChange)="scoreThreshold.set($event)"
         [enableHybridSearch]="enableHybridSearch()" (enableHybridSearchChange)="enableHybridSearch.set($event)"
         [alphaWeight]="alphaWeight()" (alphaWeightChange)="alphaWeight.set($event)"
         class="block animate-in fade-in slide-in-from-bottom-4 duration-300">
       </app-kl-step-retrieval>
+      }
 
-      <!-- Step 4: Generation -->
-      <app-kl-step-generation *ngIf="currentStep() === 4"
+      @if (currentStep() === 4) {
+      <app-kl-step-generation
         [generationModel]="generationModel()" (generationModelChange)="generationModel.set($event)"
         [temperature]="temperature()" (temperatureChange)="temperature.set($event)"
         [systemPrompt]="systemPrompt()" (systemPromptChange)="systemPrompt.set($event)"
         class="block animate-in fade-in slide-in-from-bottom-4 duration-300">
       </app-kl-step-generation>
+      }
 
-      <!-- Step 5: Evaluation -->
-      <app-kl-step-evaluation *ngIf="currentStep() === 5"
+      @if (currentStep() === 5) {
+      <app-kl-step-evaluation
         [enableEvaluation]="enableEvaluation()" (enableEvaluationChange)="enableEvaluation.set($event)"
         [evaluationMetrics]="evaluationMetrics()" (evaluationMetricsChange)="evaluationMetrics.set($event)"
         class="block animate-in fade-in slide-in-from-bottom-4 duration-300">
       </app-kl-step-evaluation>
+      }
 
-      <!-- Simulated Progress Area -->
-      <div *ngIf="isBuilding() || buildLogs().length > 0"
+      @if (isBuilding() || buildLogs().length > 0) {
+      <div
         class="bg-neutral-900 rounded-xl shadow-sm p-6 overflow-hidden border border-neutral-800 text-green-400 font-mono text-sm tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-500 mb-8">
         <div class="flex items-center gap-3 mb-4 text-white">
-          <svg *ngIf="isBuilding()" class="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none"
+          @if (isBuilding()) {
+          <svg class="animate-spin h-5 w-5 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor"
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
             </path>
           </svg>
-          <svg *ngIf="!isBuilding()" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+          } @else {
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
             class="text-green-500">
             <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
             <path d="m9 11 3 3L22 4" />
           </svg>
+          }
           <span>{{ isBuilding() ? 'System Executing [INGEST_TASK_RUNNING]...' : 'System Executing [INGEST_TASK_COMPLETE]' }}</span>
           <span class="ml-auto text-primary font-bold">{{ buildProgress() }}%</span>
         </div>
@@ -163,11 +177,14 @@
         </div>
 
         <div class="space-y-1 h-32 overflow-y-auto w-full no-scrollbar flex flex-col justify-end">
-          <div *ngFor="let log of buildLogs()" class="opacity-80 animate-in fade-in slide-in-from-bottom-1">
+          @for (log of buildLogs(); track $index) {
+          <div class="opacity-80 animate-in fade-in slide-in-from-bottom-1">
             $> {{ log }}...
           </div>
+          }
         </div>
       </div>
+      }
 
     </div>
   </div>

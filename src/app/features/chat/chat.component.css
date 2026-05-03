@@ -41,7 +41,153 @@
 /* Ensure markdown-like text is readable */
 .markdown-body {
     font-size: 1rem;
-    line-height: 1.6;
+    line-height: 1.75;
+    letter-spacing: 0.01em;
+}
+
+.markdown-body ::ng-deep h1, .markdown-body ::ng-deep h2, .markdown-body ::ng-deep h3 {
+    margin-top: 2rem;
+    margin-bottom: 1.25rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.dark .markdown-body ::ng-deep h1, .dark .markdown-body ::ng-deep h2, .dark .markdown-body ::ng-deep h3 {
+    color: #f3f4f6;
+}
+
+.markdown-body ::ng-deep h1 { font-size: 1.75rem; }
+.markdown-body ::ng-deep h2 { font-size: 1.5rem; }
+.markdown-body ::ng-deep h3 { font-size: 1.25rem; }
+
+.markdown-body ::ng-deep p {
+    margin-bottom: 1.25rem;
+}
+
+.markdown-body ::ng-deep strong {
+    font-weight: 600;
+    color: #111;
+}
+
+.dark .markdown-body ::ng-deep strong {
+    color: #fff;
+}
+
+.markdown-body ::ng-deep hr {
+    height: 1px;
+    background-color: #e5e7eb;
+    border: none;
+    margin: 2rem 0;
+}
+
+.dark .markdown-body ::ng-deep hr {
+    background-color: #374151;
+}
+
+.markdown-body ::ng-deep ul, .markdown-body ::ng-deep ol {
+    margin-bottom: 1.25rem;
+    padding-left: 1.5rem;
+}
+
+.markdown-body ::ng-deep ul { list-style-type: disc; }
+.markdown-body ::ng-deep ol { list-style-type: decimal; }
+
+.markdown-body ::ng-deep li {
+    margin-bottom: 0.5rem;
+}
+
+.markdown-body ::ng-deep li > ul, .markdown-body ::ng-deep li > ol {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.markdown-body ::ng-deep code {
+    background-color: #f3f4f6;
+    color: #d63384;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 0.9em;
+}
+
+.dark .markdown-body ::ng-deep code {
+    background-color: #1e1e1e;
+    color: #e685b5;
+}
+
+.markdown-body ::ng-deep pre {
+    background-color: #f8f9fa;
+    padding: 1.25rem;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.dark .markdown-body ::ng-deep pre {
+    background-color: #0d1117;
+    border-color: #30363d;
+}
+
+.markdown-body ::ng-deep pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    font-size: 0.95em;
+}
+
+.markdown-body ::ng-deep blockquote {
+    border-left: 4px solid #3b82f6;
+    padding: 0.5rem 0 0.5rem 1.25rem;
+    color: #4b5563;
+    background-color: #eff6ff;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 1.5rem;
+}
+
+.dark .markdown-body ::ng-deep blockquote {
+    background-color: #1e293b;
+    color: #9ca3af;
+    border-left-color: #2563eb;
+}
+
+.markdown-body ::ng-deep table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.dark .markdown-body ::ng-deep table {
+    border-color: #374151;
+}
+
+.markdown-body ::ng-deep th, .markdown-body ::ng-deep td {
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    text-align: left;
+}
+
+.dark .markdown-body ::ng-deep th, .dark .markdown-body ::ng-deep td {
+    border-color: #374151;
+}
+
+.markdown-body ::ng-deep tr:last-child td {
+    border-bottom: none;
+}
+
+.markdown-body ::ng-deep th {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+}
+
+.dark .markdown-body ::ng-deep th {
+    background-color: #1f2937;
+    color: #e5e7eb;
 }
 
 /* Gemini Thinking Dots Animation */

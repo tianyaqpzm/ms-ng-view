@@ -8,6 +8,7 @@ import { KlStepIndexingComponent } from './components/step-indexing/kl-step-inde
 import { KlStepRetrievalComponent } from './components/step-retrieval/kl-step-retrieval.component';
 import { KlStepGenerationComponent } from './components/step-generation/kl-step-generation.component';
 import { KlStepEvaluationComponent } from './components/step-evaluation/kl-step-evaluation.component';
+import { MatIconModule } from '@angular/material/icon';
 
 /**
  * 知识库嵌入与配置主组件
@@ -26,7 +27,8 @@ import { KlStepEvaluationComponent } from './components/step-evaluation/kl-step-
     KlStepIndexingComponent,
     KlStepRetrievalComponent,
     KlStepGenerationComponent,
-    KlStepEvaluationComponent
+    KlStepEvaluationComponent,
+    MatIconModule
   ],
   templateUrl: './knowledge-embedding.component.html'
 })
@@ -42,13 +44,13 @@ export class KnowledgeEmbeddingComponent implements OnInit {
   chunkSize = signal<number>(1000);
   chunkOverlap = signal<number>(200);
   separators = signal<{ value: string, label: string, checked: boolean }[]>([
-    { value: '\\n\\n', label: '按段落分割 (\\n\\n)', checked: true },
-    { value: '\\n', label: '按换行分割 (\\n)', checked: true },
+    { value: '\n\n', label: '按段落分割 (\\n\\n)', checked: true },
+    { value: '\n', label: '按换行分割 (\\n)', checked: true },
     { value: '。', label: '按句号分割 (。)', checked: false },
     { value: ';', label: '按分号分割 (;)', checked: false },
   ]);
 
-  embeddingModel = signal<string>('text-embedding-3-small');
+  embeddingModel = signal<string>('gemini-embedding-2');
   vectorStore = signal<string>('pgvector');
 
   topK = signal<number>(5);
@@ -100,7 +102,7 @@ export class KnowledgeEmbeddingComponent implements OnInit {
   resetConfig() {
     this.chunkSize.set(1000);
     this.chunkOverlap.set(200);
-    this.embeddingModel.set('text-embedding-3-small');
+    this.embeddingModel.set('gemini-embedding-2');
     this.topK.set(5);
     this.scoreThreshold.set(0.7);
     this.enableHybridSearch.set(true);
