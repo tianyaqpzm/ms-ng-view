@@ -9,7 +9,7 @@ const config = {
     '<rootDir>/node_modules/',
     '<rootDir>/dist/',
   ],
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
+  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$|marked|ngx-markdown)'],
   testEnvironment: 'jsdom',
 };
 

@@ -51,21 +51,28 @@ describe('ChatComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [ChatComponent, TranslateModule.forRoot(), MatDialogModule, NoopAnimationsModule],
+      imports: [ChatComponent, TranslateModule.forRoot(), NoopAnimationsModule],
       providers: [
         { provide: ChatUseCase, useValue: useCaseMock },
         { provide: KnowledgeUseCase, useValue: knowledgeUseCaseMock },
         { provide: UserService, useValue: { currentUser: signal(null) } },
         { provide: ThemeService, useValue: { isDarkMode: signal(false), toggleTheme: jest.fn() } },
         { provide: AuthService, useValue: { logout: jest.fn() } },
-        { provide: TranslateService, useValue: { instant: jest.fn().mockReturnValue('') } },
         { 
           provide: ActivatedRoute, 
           useValue: { params: paramsSubject.asObservable() } 
         },
         { provide: MatDialog, useValue: dialogMock }
       ]
-    }).compileComponents();
+    })
+    .overrideComponent(ChatComponent, {
+      add: {
+        providers: [
+          { provide: MatDialog, useValue: dialogMock }
+        ]
+      }
+    })
+    .compileComponents();
 
     fixture = TestBed.createComponent(ChatComponent);
     component = fixture.componentInstance;

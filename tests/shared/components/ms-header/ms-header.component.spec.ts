@@ -59,9 +59,9 @@ describe('MsHeaderComponent (Global Header)', () => {
     expect(compiled.textContent).toContain('ms-ng-view AI');
   });
 
-  it('当用户登录时，应显示用户名', () => {
+  it('当用户登录时，应在头像处显示用户首字母', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Test User');
+    expect(compiled.textContent).toContain('T');
   });
 
   it('点击语言切换按钮应调用 toggleLanguage', () => {
