@@ -1,4 +1,16 @@
 /**
+ * 聊天引用来源接口。
+ */
+export interface ChatSource {
+    /** 文档标题 */
+    title: string;
+    /** 文档链接（可选） */
+    url?: string;
+    /** 文档摘要/片段 */
+    snippet?: string;
+}
+
+/**
  * 聊天消息接口。
  */
 export interface ChatMessage {
@@ -6,6 +18,8 @@ export interface ChatMessage {
     role: 'user' | 'model';
     /** 消息内容 */
     content: string;
+    /** 引用来源（可选） */
+    sources?: ChatSource[];
 }
 
 /**

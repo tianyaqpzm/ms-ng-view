@@ -32,6 +32,8 @@
     "SELECT_KB": "Select Knowledge Base (RAG)",
     "NO_KB": "No Knowledge Base",
     "KNOWLEDGE_BASE": "Knowledge Base",
+    "REFERENCE_SOURCES": "Reference Sources",
+    "CITATION_SOURCE": "Cited from",
     "SUGGESTIONS": {
       "RECOMMEND": "Recommend for you",
       "IMAGE": "Create an image",

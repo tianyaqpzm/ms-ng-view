@@ -1,9 +1,9 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { ChatMessage, ChatSessionDto } from '../../domain/chat/chat.model';
 import { ChatApiAdapter } from '../../adapters/chat/chat-api.adapter';
 import { MediaDeviceAdapter } from '../../adapters/device/media-device.adapter';
+import { ChatMessage, ChatSessionDto } from '../../domain/chat/chat.model';
 
 @Injectable({
     providedIn: 'root'
@@ -225,12 +225,21 @@ export class ChatUseCase {
         this.isThinking.set(true);
 
         this.currentSubscription = this.chatApi.sendMessageStream(this.activeSessionId(), fullContent, topicId).subscribe({
-            next: (partialContent) => {
-                this.isThinking.set(false);
+            next: (data) => {
                 this.messages.update(msgs => {
                     const newMsgs = [...msgs];
                     if (newMsgs[aiMsgIndex]) {
-                        newMsgs[aiMsgIndex] = { ...newMsgs[aiMsgIndex], content: partialContent };
+                        if (typeof data === 'string') {
+                            newMsgs[aiMsgIndex] = { 
+                                ...newMsgs[aiMsgIndex], 
+                                content: newMsgs[aiMsgIndex].content + data 
+                            };
+                        } else if (data.sources) {
+                            newMsgs[aiMsgIndex] = { 
+                                ...newMsgs[aiMsgIndex], 
+                                sources: data.sources as any 
+                            };
+                        }
                     }
                     return newMsgs;
                 });
@@ -248,6 +257,7 @@ export class ChatUseCase {
                 });
             },
             complete: () => {
+                this.isThinking.set(false);
                 this.currentSubscription = null;
                 if (aiMsgIndex === 1) {
                     this.refreshSessionsListSilently();
@@ -276,7 +286,7 @@ export class ChatUseCase {
         const msgs = this.messages();
         const content = msgs[index].content;
         const cleanedContent = content.replace(/ \\[(?:File|Image|Photo):[^\\]]*\\]/g, '').trim();
-        
+
         this.messages.set(msgs.slice(0, index));
         setInputCallback(cleanedContent);
     }
@@ -323,7 +333,7 @@ export class ChatUseCase {
             next: () => {
                 // 更新会话列表 Signal
                 this.chatSessions.update(sessions => sessions.filter(s => s.sessionId !== sessionId));
-                
+
                 // 如果删除的是当前活动会话，则重置状态
                 if (this.activeSessionId() === sessionId) {
                     this.activeSessionId.set('');

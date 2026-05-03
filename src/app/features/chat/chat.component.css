@@ -246,6 +246,40 @@
     transform: scale(1.15);
 }
 
-.mat-icon-button:active .mat-icon {
-    transform: scale(0.9);
+
+/* Citation Tag Styling */
+.citation-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #4285f4;
+    background-color: rgba(66, 133, 244, 0.1);
+    border: 1px solid rgba(66, 133, 244, 0.2);
+    border-radius: 4px;
+    margin: 0 2px;
+    cursor: help;
+    vertical-align: middle;
+    transition: all 0.2s ease;
+}
+
+.citation-tag:hover {
+    background-color: #4285f4;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(66, 133, 244, 0.3);
+}
+
+.dark .citation-tag {
+    color: #8ab4f8;
+    background-color: rgba(138, 180, 248, 0.15);
+    border-color: rgba(138, 180, 248, 0.3);
+}
+
+.dark .citation-tag:hover {
+    background-color: #8ab4f8;
+    color: #131314;
 }

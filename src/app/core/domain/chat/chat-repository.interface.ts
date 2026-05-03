@@ -26,7 +26,7 @@ export interface ChatRepository {
      * @param topicId - 知识库主题 ID（可选）。
      * @returns 流式响应内容 Observable。
      */
-    sendMessageStream(sessionId: string, message: string, topicId: string | null): Observable<string>;
+    sendMessageStream(sessionId: string, message: string, topicId: string | null): Observable<string | { content?: string, sources?: any[] }>;
 
     /**
      * 删除指定会话。

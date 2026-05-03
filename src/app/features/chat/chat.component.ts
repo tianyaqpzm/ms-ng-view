@@ -21,6 +21,8 @@ import { KnowledgeUseCase } from '../../core/use-cases/knowledge/knowledge.useca
 import { SettingsDialogComponent } from '../../shared/components/settings-dialog/settings-dialog.component';
 import { CookPortalComponent } from './components/cook-portal/cook-portal.component';
 import { DeleteConfirmDialogComponent } from './delete-confirm-dialog.component';
+import { CitationPipe } from '../../shared/pipes/citation.pipe';
+
 
 /**
  * AI 聊天主组件
@@ -45,7 +47,8 @@ import { DeleteConfirmDialogComponent } from './delete-confirm-dialog.component'
         MatDialogModule,
         TranslateModule,
         MarkdownComponent,
-        CookPortalComponent
+        CookPortalComponent,
+        CitationPipe
     ],
     templateUrl: './chat.component.html',
     styleUrls: ['./chat.component.css'],
@@ -88,6 +91,10 @@ export class ChatComponent {
     protected get responseRatings() { return this.chatUseCase.responseRatings; }
 
     protected readonly document = document;
+
+    // 引用悬浮窗状态
+    protected citationTooltip = signal<{ id: string, x: number, y: number } | null>(null);
+
 
     constructor(
         private knowledgeUseCase: KnowledgeUseCase,
@@ -384,5 +391,51 @@ export class ChatComponent {
         const content = explicitValue !== undefined ? explicitValue : this.userInput();
         this.chatUseCase.sendMessage(content.trim(), this.selectedTopic()?.id || null, (key) => this.translate.instant(key));
         this.userInput.set('');
+    }
+
+    /**
+     * 显示引用详情悬浮窗（由 CitationPipe 生成的 HTML 触发）
+     * @param event - 鼠标事件
+     * @param id - 引用 ID
+     */
+    protected showTooltip(event: MouseEvent, id: string) {
+        const target = event.target as HTMLElement;
+        const rect = target.getBoundingClientRect();
+        
+        this.citationTooltip.set({
+            id,
+            x: rect.left,
+            y: rect.top - 10 // 在标签上方显示
+        });
+    }
+
+    /**
+     * 隐藏引用详情悬浮窗
+     */
+    protected hideTooltip() {
+        this.citationTooltip.set(null);
+    }
+
+    /**
+     * 处理 Markdown 区域的鼠标移入事件（事件委托）
+     */
+    protected onMarkdownMouseOver(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        if (target.classList.contains('citation-tag')) {
+            const id = target.getAttribute('data-id');
+            if (id) {
+                this.showTooltip(event, id);
+            }
+        }
+    }
+
+    /**
+     * 处理 Markdown 区域的鼠标移出事件
+     */
+    protected onMarkdownMouseOut(event: MouseEvent) {
+        const target = event.target as HTMLElement;
+        if (target.classList.contains('citation-tag')) {
+            this.hideTooltip();
+        }
     }
 }

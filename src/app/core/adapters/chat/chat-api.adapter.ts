@@ -55,10 +55,13 @@ export class ChatApiAdapter implements ChatRepository {
      * @param sessionId - 会话 ID。
      * @param message - 用户消息内容。
      * @param topicId - 知识库主题 ID（可选）。
-     * @returns 流式响应内容 Observable。
+     * @returns 流式响应内容 Observable (字符串或包含 sources 的对象)。
      */
-    sendMessageStream(sessionId: string, message: string, topicId: string | null): Observable<string> {
-        return new Observable<string>(observer => {
+    sendMessageStream(sessionId: string, message: string, topicId: string | null): Observable<string | { content?: string, sources?: any[] }> {
+        return new Observable<string | { content?: string, sources?: any[] }>(observer => {
+            let lastProcessedIndex = 0;
+            let lineBuffer = '';
+
             const subscription = this.http.post(
                 URLConfig.CHAT.AGENT_CHAT,
                 {
@@ -73,20 +76,34 @@ export class ChatApiAdapter implements ChatRepository {
                 }
             ).subscribe({
                 next: (event) => {
-                    if (event.type === HttpEventType.DownloadProgress) {
-                        const partialText = (event as any).partialText as string;
-                        if (partialText) {
-                            this.parseSSEData(partialText, observer);
-                        }
-                    } else if (event.type === HttpEventType.Response) {
-                        const body = event.body as string;
-                        if (body) {
-                            this.parseSSEData(body, observer);
+                    if (event.type === HttpEventType.DownloadProgress || event.type === HttpEventType.Response) {
+                        const currentFullText = (event as any).partialText || (event as any).body || '';
+                        if (currentFullText.length > lastProcessedIndex) {
+                            const newText = currentFullText.substring(lastProcessedIndex);
+                            lastProcessedIndex = currentFullText.length;
+                            
+                            // 拼接到缓冲区
+                            lineBuffer += newText;
+                            
+                            // 按换行符切分，处理完整行
+                            const lines = lineBuffer.split('\n');
+                            // 最后一部分可能是不完整的行，保留在缓冲区
+                            lineBuffer = lines.pop() || '';
+                            
+                            for (const line of lines) {
+                                this.processLine(line, observer);
+                            }
                         }
                     }
                 },
                 error: (err) => {
                     observer.error(err);
+                },
+                complete: () => {
+                    // 处理最后剩余的内容
+                    if (lineBuffer) {
+                        this.processLine(lineBuffer, observer);
+                    }
                 }
             });
 
@@ -95,27 +112,28 @@ export class ChatApiAdapter implements ChatRepository {
     }
 
     /**
-     * 解析 SSE 流数据。
-     * @param text - 接收到的流数据片段。
-     * @param observer - RxJS 观察者。
+     * 处理单行 SSE 数据。
      */
-    private parseSSEData(text: string, observer: any) {
-        const lines = text.split('\n');
-        for (const line of lines) {
-            if (line.startsWith('data: ')) {
-                const data = line.slice(6);
-                if (data === '[DONE]') {
-                    observer.complete();
-                    break;
+    private processLine(line: string, observer: any) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('data: ')) {
+            const data = trimmed.slice(6);
+            if (data === '[DONE]') {
+                observer.complete();
+                return;
+            }
+            try {
+                const parsed = JSON.parse(data);
+                // 如果包含 content，发送 content
+                if (parsed.content) {
+                    observer.next(parsed.content);
                 }
-                try {
-                    const parsed = JSON.parse(data);
-                    if (parsed.content) {
-                        observer.next(parsed.content);
-                    }
-                } catch (e) {
-                    // 忽略部分解析错误
+                // 如果包含 sources，发送整个对象供 UseCase 识别
+                if (parsed.sources) {
+                    observer.next({ sources: parsed.sources });
                 }
+            } catch (e) {
+                // 忽略解析错误
             }
         }
     }

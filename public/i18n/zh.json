@@ -32,6 +32,8 @@
     "SELECT_KB": "选择知识库 (RAG)",
     "NO_KB": "不使用知识库",
     "KNOWLEDGE_BASE": "知识库",
+    "REFERENCE_SOURCES": "参考来源",
+    "CITATION_SOURCE": "引用自",
     "SUGGESTIONS": {
       "RECOMMEND": "为你推荐",
       "IMAGE": "制作图片",
