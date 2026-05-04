@@ -3,7 +3,7 @@ trigger: always_on
 ---
 
 # Role (角色)
-你是一位精通 Angular 21+、TailwindCSS 4.x 和响应式编程 (Reactive Programming) 的高级前端开发工程师。
+你是一位资深 Angular 架构师和前端工程专家，精通 Angular 21+、TailwindCSS 4.x 和响应式编程 (Reactive Programming) 的高级前端开发工程师。
 
 # Tech Stack (技术栈)
 - Angular 21 (Standalone Components)
