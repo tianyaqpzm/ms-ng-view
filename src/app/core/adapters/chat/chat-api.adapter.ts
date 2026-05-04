@@ -5,12 +5,21 @@ import { ChatRepository } from '../../domain/chat/chat-repository.interface';
 import { ChatMessage, ChatSessionDto } from '../../domain/chat/chat.model';
 import { URLConfig } from '../../constants/url.config';
 
+/**
+ * 聊天会话 API 适配器实现。
+ * 通过 HTTP 与后端交互，实现 ChatRepository 定义的操作。
+ */
 @Injectable({
     providedIn: 'root'
 })
 export class ChatApiAdapter implements ChatRepository {
     private http = inject(HttpClient);
 
+    /**
+     * 获取指定会话的历史消息。
+     * @param sessionId - 会话 ID。
+     * @returns 消息列表 Observable。
+     */
     getHistory(sessionId: string): Observable<ChatMessage[]> {
         return this.http.get<any[]>(URLConfig.CHAT.HISTORY, {
             params: { sessionId }
@@ -22,14 +31,37 @@ export class ChatApiAdapter implements ChatRepository {
         );
     }
 
+    /**
+     * 获取所有聊天会话列表。
+     * @returns 会话列表 Observable。
+     */
     getSessions(): Observable<ChatSessionDto[]> {
         return this.http.get<ChatSessionDto[]>(URLConfig.CHAT.SESSIONS).pipe(
             catchError(() => of([]))
         );
     }
 
-    sendMessageStream(sessionId: string, message: string, topicId: string | null): Observable<string> {
-        return new Observable<string>(observer => {
+    /**
+     * 删除指定会话。
+     * @param sessionId - 要删除的会话 ID。
+     * @returns 操作结果 Observable。
+     */
+    deleteSession(sessionId: string): Observable<void> {
+        return this.http.delete<void>(`${URLConfig.CHAT.SESSIONS}/${sessionId}`);
+    }
+
+    /**
+     * 发送流式消息。
+     * @param sessionId - 会话 ID。
+     * @param message - 用户消息内容。
+     * @param topicId - 知识库主题 ID（可选）。
+     * @returns 流式响应内容 Observable (字符串或包含 sources 的对象)。
+     */
+    sendMessageStream(sessionId: string, message: string, topicId: string | null): Observable<string | { content?: string, sources?: any[] }> {
+        return new Observable<string | { content?: string, sources?: any[] }>(observer => {
+            let lastProcessedIndex = 0;
+            let lineBuffer = '';
+
             const subscription = this.http.post(
                 URLConfig.CHAT.AGENT_CHAT,
                 {
@@ -44,21 +76,34 @@ export class ChatApiAdapter implements ChatRepository {
                 }
             ).subscribe({
                 next: (event) => {
-                    if (event.type === HttpEventType.DownloadProgress) {
-                        const partialText = (event as any).partialText as string;
-                        if (partialText) {
-                            this.parseSSEData(partialText, observer);
+                    if (event.type === HttpEventType.DownloadProgress || event.type === HttpEventType.Response) {
+                        const currentFullText = (event as any).partialText || (event as any).body || '';
+                        if (currentFullText.length > lastProcessedIndex) {
+                            const newText = currentFullText.substring(lastProcessedIndex);
+                            lastProcessedIndex = currentFullText.length;
+                            
+                            // 拼接到缓冲区
+                            lineBuffer += newText;
+                            
+                            // 按换行符切分，处理完整行
+                            const lines = lineBuffer.split('\n');
+                            // 最后一部分可能是不完整的行，保留在缓冲区
+                            lineBuffer = lines.pop() || '';
+                            
+                            for (const line of lines) {
+                                this.processLine(line, observer);
+                            }
                         }
-                    } else if (event.type === HttpEventType.Response) {
-                        const body = event.body as string;
-                        if (body) {
-                            this.parseSSEData(body, observer);
-                        }
-                        // Do not immediately complete on response, wait for [DONE] message in stream
                     }
                 },
                 error: (err) => {
                     observer.error(err);
+                },
+                complete: () => {
+                    // 处理最后剩余的内容
+                    if (lineBuffer) {
+                        this.processLine(lineBuffer, observer);
+                    }
                 }
             });
 
@@ -66,23 +111,29 @@ export class ChatApiAdapter implements ChatRepository {
         });
     }
 
-    private parseSSEData(text: string, observer: any) {
-        const lines = text.split('\\n');
-        for (const line of lines) {
-            if (line.startsWith('data: ')) {
-                const data = line.slice(6);
-                if (data === '[DONE]') {
-                    observer.complete();
-                    break;
+    /**
+     * 处理单行 SSE 数据。
+     */
+    private processLine(line: string, observer: any) {
+        const trimmed = line.trim();
+        if (trimmed.startsWith('data: ')) {
+            const data = trimmed.slice(6);
+            if (data === '[DONE]') {
+                observer.complete();
+                return;
+            }
+            try {
+                const parsed = JSON.parse(data);
+                // 如果包含 content，发送 content
+                if (parsed.content) {
+                    observer.next(parsed.content);
                 }
-                try {
-                    const parsed = JSON.parse(data);
-                    if (parsed.content) {
-                        observer.next(parsed.content);
-                    }
-                } catch (e) {
-                    // Ignore JSON parse error for partial lines
+                // 如果包含 sources，发送整个对象供 UseCase 识别
+                if (parsed.sources) {
+                    observer.next({ sources: parsed.sources });
                 }
+            } catch (e) {
+                // 忽略解析错误
             }
         }
     }

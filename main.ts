@@ -10,6 +10,7 @@ import { routes } from './src/app.routes';
 import { apiUrlInterceptor } from './src/app/core/interceptors/base-url.interceptor';
 import { UserService } from './src/app/core/services/user.service';
 import { provideI18n } from './src/app/core/configs/i18n.config';
+import { provideMarkdown } from 'ngx-markdown';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -23,6 +24,7 @@ bootstrapApplication(AppComponent, {
       withFetch(),
       withInterceptors([apiUrlInterceptor])
     ),
+    provideMarkdown(),
     {
       provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
       useValue: { appearance: 'outline' }

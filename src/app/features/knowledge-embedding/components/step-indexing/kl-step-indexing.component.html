@@ -1,0 +1,58 @@
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-neutral-200 dark:border-white/10 shadow-sm p-6 lg:p-8 transition-colors">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="p-2 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <ellipse cx="12" cy="5" rx="9" ry="3" />
+        <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+        <path d="M3 12A9 3 0 0 0 21 12" />
+      </svg>
+    </div>
+    <div>
+      <h2 class="text-lg font-semibold">向量计算与持久化 (Indexing)</h2>
+      <p class="text-sm text-neutral-500 dark:text-slate-400">选择将文本映射高维空间的基座模型及落库目标。</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div>
+      <label class="block text-sm font-medium mb-2">Embedding 模型</label>
+      <div class="relative">
+        <select [ngModel]="embeddingModel()" (ngModelChange)="onModelChange($event)"
+          class="w-full px-4 py-2 border border-neutral-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm appearance-none bg-neutral-50 dark:bg-background-dark text-neutral-900 dark:text-white transition-colors">
+          <option value="gemini-embedding-2">gemini-embedding-2 (Google, 默认高精度)</option>
+          <option value="text-embedding-3-small">text-embedding-3-small (OpenAI)</option>
+          <option value="text-embedding-3-large">text-embedding-3-large (OpenAI)</option>
+          <option value="bge-large-zh-v1.5">bge-large-zh-v1.5 (Local, 推理加速)</option>
+          <option value="m3e-base">m3e-base (Local, 性能优化)</option>
+        </select>
+        <div
+          class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-neutral-500 dark:text-slate-500">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium mb-2">向量存储引擎 (Vector Store)</label>
+      <div class="relative">
+        <select disabled [ngModel]="vectorStore()"
+          class="w-full px-4 py-2 border border-neutral-300 dark:border-white/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-sm appearance-none bg-neutral-50 dark:bg-background-dark text-neutral-900 dark:text-slate-400 opacity-80 transition-colors cursor-not-allowed">
+          <option value="pgvector">PostgreSQL (pgvector)</option>
+        </select>
+        <div
+          class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-neutral-500 dark:text-slate-500">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 15V3" />
+            <path d="m8 11 4 4 4-4" />
+          </svg>
+        </div>
+      </div>
+      <p class="text-xs text-neutral-500 dark:text-slate-500 mt-2">系统当前强制绑定 pgvector 作为多租户隔离存储。</p>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,5 @@
 import { Injectable, signal } from '@angular/core';
+import { environment } from '@/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,8 @@ export class AuthService {
   constructor() { }
 
   /**
-   * 保存 Token 到本地
+   * 保存 Token 到本地并更新登录状态。
+   * @param token - 待保存的 JWT Token。
    */
   saveToken(token: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
@@ -24,14 +26,15 @@ export class AuthService {
   }
 
   /**
-   * 获取本地 Token
+   * 从本地持久化存储中获取 Token。
+   * @returns Token 字符串或 null。
    */
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
   /**
-   * 移除 Token
+   * 移除本地 Token 并更新登录状态为未登录。
    */
   removeToken(): void {
     localStorage.removeItem(this.TOKEN_KEY);
@@ -39,7 +42,8 @@ export class AuthService {
   }
 
   /**
-   * 判断是否存在 Token
+   * 快速判断当前是否有可用的 Token 凭证。
+   * @returns 布尔值。
    */
   hasToken(): boolean {
     const token = this.getToken();
@@ -47,8 +51,10 @@ export class AuthService {
   }
 
   /**
-   * 从当前 URL 中提取 Token (通常在重定向回来后调用)
-   * 兼容 ?token=xxx 和 #/.../?token=xxx
+   * 从当前浏览器 URL 中提取 Token。
+   * 支持标准 Search 参数及 Hash 模式下的参数提取。
+   * 提取成功后会自动保存 Token 并清理 URL 中的敏感参数。
+   * @returns 提取到的 Token 或 null。
    */
   extractTokenFromUrl(): string | null {
     // 1. 先尝试从标准的 search params 中获取
@@ -92,8 +98,10 @@ export class AuthService {
     }
     return null;
   }
+
   /**
-   * 安全登出
+   * 执行安全登出操作。
+   * 清理本地凭证并重定向至系统的统一登出端点。
    */
   logout(): void {
     // 1. 清理本地数据
@@ -101,6 +109,6 @@ export class AuthService {
     
     // 2. 跳转到网关的退出接口
     // 网关会负责清除后端会话并重定向回登录页
-    window.location.href = '/logout';
+    window.location.href = `${environment.VITE_GATEWAY_URL}/logout`;
   }
 }

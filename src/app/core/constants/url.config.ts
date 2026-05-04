@@ -17,5 +17,8 @@ export const URLConfig = {
     },
     DEVICES: {
         // Future placeholders
+    },
+    EXTERNAL: {
+        CASDOOR_ACCOUNT: '/account?application=ai-agent'
     }
 };

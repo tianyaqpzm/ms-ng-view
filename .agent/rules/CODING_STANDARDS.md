@@ -80,6 +80,11 @@ trigger: always_on
 - **选择器转义**: 在 CSS 中引用 Tailwind 重要性修饰符时，**必须**对 `!` 进行转义（例：`.\!w-8`）。
 - **CSS 用途**: 仅用于覆盖 Material 深层样式 (`::ng-deep`)、复杂 Keyframes 动画或无法通过 Tailwind 实现的交互。
 
+### 3. 图标对齐与剪裁规范 (Icon Alignment & Clipping)
+- **全局对齐**：系统已在 `styles.css` 中全局配置 `mat-icon` 为 `inline-flex` 居中并设置 `overflow: visible`。
+- **使用要求**：在组件中使用图标时，**仅需**通过 Tailwind 设置所需的 `font-size`。
+- **示例**：`<mat-icon class="!text-[16px]">content_copy</mat-icon>`（无需再写一堆 flex 补丁）。
+
 ---
 
 ## 六、 维护与测试规范 (Maintenance & Testing)
@@ -97,7 +102,17 @@ trigger: always_on
 
 ---
 
-## 七、 业务特性规范 (Feature Specifics)
+---
+
+## 七、 文档与注释规范 (Documentation Standards)
+- **TSDoc 强制**: 所有导出的类、接口、公共方法（public）和受保护方法（protected）必须包含 TSDoc 注释。
+- **内容要求**: 注释必须清晰描述功能、参数（`@param`）和返回值（`@returns`）。
+- **语言**: 核心业务逻辑建议使用中文注释，保持与需求文档一致。
+- **代码自解释**: 良好的命名是第一位的，注释应侧重于解释“为什么”而非“做什么”。
+
+---
+
+## 八、 业务特性规范 (Feature Specifics)
 
 ### 1. 国际化 (i18n)
 - 使用 `provideTranslateService` 和 `provideTranslateHttpLoader` 函数式 Provider。

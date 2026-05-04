@@ -6,19 +6,20 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { RouterModule } from '@angular/router';
 import { Topic } from '../../core/domain/knowledge/knowledge.model';
 import { KnowledgeUseCase } from '../../core/use-cases/knowledge/knowledge.usecase';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
-  imports: [MatDialogModule, MatButtonModule],
+  imports: [MatDialogModule, MatButtonModule, TranslateModule],
   template: `
     <h2 mat-dialog-title class="m-0 text-lg font-medium">{{ data.title }}</h2>
     <mat-dialog-content class="mt-4">
       <p class="text-neutral-600">{{ data.message }}</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end" class="mb-2 mr-2">
-      <button mat-button mat-dialog-close class="mr-2">取消</button>
-      <button mat-flat-button color="warn" [mat-dialog-close]="true">删除</button>
+      <button mat-button mat-dialog-close class="mr-2">{{ 'COMMON.CANCEL' | translate }}</button>
+      <button mat-flat-button color="warn" [mat-dialog-close]="true">{{ 'COMMON.DELETE' | translate }}</button>
     </mat-dialog-actions>
   `
 })
@@ -32,12 +33,13 @@ export class ConfirmDialogComponent {
 @Component({
   selector: 'app-knowledge',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, MatDialogModule],
+  imports: [CommonModule, FormsModule, RouterModule, MatDialogModule, TranslateModule],
   templateUrl: './knowledge.component.html'
 })
 export class KnowledgeComponent implements OnInit {
   protected useCase = inject(KnowledgeUseCase);
   private dialog = inject(MatDialog);
+  private translate = inject(TranslateService);
 
   // UI-only states
   editingTopicId = signal<string | null>(null);
@@ -110,8 +112,8 @@ export class KnowledgeComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       data: {
-        title: '删除专题',
-        message: '您确定要删除该专题吗？这将一并删除该专题归属下的所有文档元数据记录，且不可恢复！'
+        title: this.translate.instant('KNOWLEDGE.DELETE_CONFIRM.TOPIC_TITLE'),
+        message: this.translate.instant('KNOWLEDGE.DELETE_CONFIRM.TOPIC_MSG')
       }
     });
 
@@ -130,8 +132,8 @@ export class KnowledgeComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '400px',
       data: {
-        title: '删除文档',
-        message: '您确定要彻底删除该文档吗？这将从服务器上永久抹除这个物理文件。'
+        title: this.translate.instant('KNOWLEDGE.DELETE_CONFIRM.DOC_TITLE'),
+        message: this.translate.instant('KNOWLEDGE.DELETE_CONFIRM.DOC_MSG')
       }
     });
 

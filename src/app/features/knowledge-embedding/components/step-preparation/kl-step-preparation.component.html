@@ -1,0 +1,56 @@
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-neutral-200 dark:border-white/10 shadow-sm p-6 lg:p-8 transition-colors">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" />
+        <path d="M12 12v9" />
+        <path d="m8 17 4 4 4-4" />
+      </svg>
+    </div>
+    <div>
+      <h2 class="text-lg font-semibold">文本分块设置 (Chunking Strategy)</h2>
+      <p class="text-sm text-neutral-500 dark:text-slate-400">将长篇文档拆分为利于大模型检索的颗粒片段。</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <label class="text-sm font-medium">最大分块字符数 (Chunk Size)</label>
+        <span class="text-sm text-primary font-bold">{{ chunkSize() }}</span>
+      </div>
+      <input type="range" min="100" max="2000" step="100" [ngModel]="chunkSize()"
+        (ngModelChange)="onChunkSizeChange($event)"
+        class="w-full mb-2 accent-primary bg-neutral-200 dark:bg-white/10 h-2 rounded-lg appearance-none cursor-pointer">
+      <p class="text-xs text-neutral-500 dark:text-slate-400">建议中文文稿使用 500-1000 Tokens</p>
+    </div>
+
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <label class="text-sm font-medium">分块重叠度 (Chunk Overlap)</label>
+        <span class="text-sm text-primary font-bold">{{ chunkOverlap() }}</span>
+      </div>
+      <input type="range" min="0" max="500" step="50" [ngModel]="chunkOverlap()"
+        (ngModelChange)="onChunkOverlapChange($event)"
+        class="w-full mb-2 accent-primary bg-neutral-200 dark:bg-white/10 h-2 rounded-lg appearance-none cursor-pointer">
+      <p class="text-xs text-neutral-500 dark:text-slate-400">保留上文的尾部作为下文的开头，防止语义截断丢失。</p>
+    </div>
+
+    <div class="md:col-span-2 mt-2">
+      <label class="block text-sm font-medium mb-3">分界标记 (Separators Priority)</label>
+      <div class="flex flex-wrap gap-3">
+        <label *ngFor="let sep of separators(); let i = index"
+          class="flex items-center gap-2 px-3 py-2 border rounded-lg cursor-pointer transition-colors"
+          [ngClass]="sep.checked ? 'border-primary bg-primary/5 dark:bg-primary/10' : 'border-neutral-200 dark:border-white/10 bg-neutral-50 dark:bg-background-dark hover:border-neutral-300 dark:hover:border-white/20'">
+          <input type="checkbox" [checked]="sep.checked" (change)="toggleSeparator(i)"
+            class="text-primary focus:ring-primary h-4 w-4 rounded border-neutral-300 dark:border-white/30 dark:bg-background-dark">
+          <span class="text-sm"
+            [ngClass]="sep.checked ? 'text-primary dark:text-blue-300 font-medium' : 'text-neutral-700 dark:text-slate-300'">
+            {{ sep.label }}
+          </span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,74 @@
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-neutral-200 dark:border-white/10 shadow-sm p-6 lg:p-8 transition-colors">
+  <div class="flex items-center gap-3 mb-6">
+    <div class="p-2 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-lg">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+        <path d="M11 8v6" />
+        <path d="M8 11h6" />
+      </svg>
+    </div>
+    <div>
+      <h2 class="text-lg font-semibold">提取与匹配控制 (Retrieval Optimization)</h2>
+      <p class="text-sm text-neutral-500 dark:text-slate-400">Agent 在进行问答 or RAG 任务时的上下文召回配置。</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <label class="text-sm font-medium">召回数量限制 (Top K)</label>
+        <span
+          class="text-sm font-mono bg-neutral-100 dark:bg-white/5 px-2 py-0.5 rounded border border-neutral-200 dark:border-white/10">
+          {{ topK() }} 片段
+        </span>
+      </div>
+      <input type="range" min="1" max="20" step="1" [ngModel]="topK()" (ngModelChange)="onTopKChange($event)"
+        class="w-full mb-2 accent-green-600 dark:accent-green-500 bg-neutral-200 dark:bg-white/10 h-2 rounded-lg appearance-none cursor-pointer">
+    </div>
+
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <label class="text-sm font-medium">余弦相似度阈值 (Min Score)</label>
+        <span
+          class="text-sm font-mono bg-neutral-100 dark:bg-white/5 px-2 py-0.5 rounded border border-neutral-200 dark:border-white/10">
+          > {{ scoreThreshold() | number:'1.2-2' }}
+        </span>
+      </div>
+      <input type="range" min="0.1" max="0.99" step="0.01" [ngModel]="scoreThreshold()"
+        (ngModelChange)="onScoreThresholdChange($event)"
+        class="w-full mb-2 accent-green-600 dark:accent-green-500 bg-neutral-200 dark:bg-white/10 h-2 rounded-lg appearance-none cursor-pointer">
+    </div>
+
+    <div class="md:col-span-2 pt-4 border-t border-neutral-100 dark:border-white/5 flex flex-col gap-4">
+      <label class="flex items-center gap-3 cursor-pointer group">
+        <div class="relative flex items-center">
+          <input type="checkbox" [ngModel]="enableHybridSearch()" (ngModelChange)="onHybridSearchChange($event)"
+            class="sr-only peer">
+          <div
+            class="w-11 h-6 bg-neutral-300 dark:bg-white/20 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary">
+          </div>
+        </div>
+        <span class="text-sm font-medium">启用混合检索 (Hybrid Search + RRF 融合)</span>
+        <span
+          class="ml-auto text-xs text-neutral-500 dark:text-slate-400 bg-neutral-100 dark:bg-white/5 px-2 py-1 rounded">推荐开启</span>
+      </label>
+
+      <div *ngIf="enableHybridSearch()"
+        class="pl-14 pr-4 transition-all duration-300 animate-in fade-in slide-in-from-top-2">
+        <div class="flex justify-between items-center mb-2">
+          <label class="text-xs text-neutral-500 dark:text-slate-400 font-medium tracking-wide">
+            (BM25 词频权重) Alpha (Vector 向量权重)
+          </label>
+          <span class="text-xs font-mono text-primary bg-primary/10 px-1.5 py-0.5 rounded">
+            {{ alphaWeight() }}
+          </span>
+        </div>
+        <input type="range" min="0" max="1" step="0.1" [ngModel]="alphaWeight()"
+          (ngModelChange)="onAlphaWeightChange($event)"
+          class="w-full accent-primary bg-gradient-to-r from-neutral-300 via-primary/50 to-primary h-1.5 rounded-lg appearance-none cursor-pointer">
+      </div>
+    </div>
+  </div>
+</div>

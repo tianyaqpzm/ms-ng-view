@@ -9,13 +9,14 @@
     "NEW_CONVERSATION": "New Conversation",
     "LIGHT_MODE": "Light Mode",
     "DARK_MODE": "Dark Mode",
-    "SETTINGS": "Settings"
+    "SETTINGS": "Settings",
+    "DELETE_CONFIRM": "Are you sure you want to delete this session and all its messages? This action cannot be undone."
   },
   "CHAT": {
-    "WELCOME": "Hello, Traveler",
+    "WELCOME": "Hello, {{name}}",
     "SUBTITLE": "How can I help you manage your time today?",
     "PLACEHOLDER": "Ask anything...",
-    "DISCLAIMER": "Timekeeper AI may display inaccurate info, including about people, so double-check its responses.",
+    "DISCLAIMER": "As an AI tool, its responses may not always be accurate.",
     "RETRY": "Response failed, click to retry",
     "EDIT": "Edit this question",
     "COPY_TEXT": "Copy text",
@@ -23,13 +24,24 @@
     "RATE_GOOD": "Good response",
     "RATE_BAD": "Bad response",
     "REGENERATE": "Regenerate",
+    "DELETE_SESSION": "Delete Session",
     "EXPORT": "Export",
     "UPLOAD_FILE": "Upload File",
     "TAKE_PHOTO": "Take Photo",
     "ATTACH_FILE": "Add file or photo",
     "SELECT_KB": "Select Knowledge Base (RAG)",
     "NO_KB": "No Knowledge Base",
-    "KNOWLEDGE_BASE": "Knowledge Base"
+    "KNOWLEDGE_BASE": "Knowledge Base",
+    "REFERENCE_SOURCES": "Reference Sources",
+    "CITATION_SOURCE": "Cited from",
+    "SUGGESTIONS": {
+      "RECOMMEND": "Recommend for you",
+      "IMAGE": "Create an image",
+      "COOK": "What to eat today?",
+      "STUDY": "Help me study",
+      "WRITE": "Write something",
+      "ENERGY": "Energize my day"
+    }
   },
   "THEME": {
     "SWITCH_TO_LIGHT": "Switch to light mode",
@@ -51,5 +63,67 @@
     "AI_PREFERENCE": "AI Preference",
     "STREAM_ANIMATION": "Enable streaming output animation",
     "DONE": "Done"
+  },
+  "COMMON": {
+    "BACK": "Back",
+    "CANCEL": "Cancel",
+    "DELETE": "Delete",
+    "SAVE": "Save",
+    "SAVING": "Saving..."
+  },
+  "KNOWLEDGE": {
+    "TITLE": "Knowledge Space",
+    "SUBTITLE": "Enterprise Document and Data Management",
+    "NEW_TOPIC": "New Topic",
+    "EDIT_TOPIC": "Rename Topic",
+    "DELETE_TOPIC": "Delete Topic",
+    "SEARCH_PLACEHOLDER": "Search documents in current topic...",
+    "IMPORT_DOC": "Import Document",
+    "IMPORTING": "Importing...",
+    "NEW_DOC": "New Document",
+    "EMPTY": {
+      "TITLE": "No documents found",
+      "SUBTITLE": "Try a different search term or create a new document in this topic"
+    },
+    "TABLE": {
+      "TITLE": "Title",
+      "STATUS": "Status",
+      "AUTHOR": "Author",
+      "UPDATE_TIME": "Update Time",
+      "ACTIONS": "Actions",
+      "PREVIEW": "Preview",
+      "CONFIG": "Config"
+    },
+    "STATUS": {
+      "IN_PROGRESS": "In Progress",
+      "REVIEWED": "Reviewed",
+      "PUBLISHED": "Published"
+    },
+    "DELETE_CONFIRM": {
+      "TOPIC_TITLE": "Delete Topic",
+      "TOPIC_MSG": "Are you sure you want to delete this topic? This will also delete all document metadata records under this topic, and it cannot be recovered!",
+      "DOC_TITLE": "Delete Document",
+      "DOC_MSG": "Are you sure you want to completely delete this document? This will permanently erase the physical file from the server."
+    },
+    "MODAL": {
+      "TITLE_CREATE": "New Knowledge Topic",
+      "TITLE_EDIT": "Edit Knowledge Topic",
+      "NAME": "Topic Name",
+      "NAME_PLACEHOLDER": "Enter topic name, e.g., 'AI Research'",
+      "DESC": "Topic Description",
+      "DESC_PLACEHOLDER": "Briefly describe the goal or content of this topic",
+      "VISIBILITY": "Visibility",
+      "VISIBILITY_PARTICIPANTS": "Participants Only",
+      "VISIBILITY_PRIVATE": "Private",
+      "TEMPLATE": "Select Template",
+      "VISIBILITY_PUBLIC": "Public to All",
+      "TEMPLATE_BLANK": "Blank Template",
+      "TEMPLATE_R_D": "R&D Project Template",
+      "TEMPLATE_MARKET": "Market Research Template",
+      "SAVE": "Confirm",
+      "SAVE_CREATE": "Confirm Creation",
+      "SAVE_EDIT": "Confirm Edit",
+      "CANCEL": "Cancel"
+    }
   }
 }

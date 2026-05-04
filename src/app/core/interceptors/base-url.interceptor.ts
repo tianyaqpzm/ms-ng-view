@@ -1,10 +1,10 @@
 import { environment } from '@/environments/environment';
+import { DOCUMENT } from '@angular/common';
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { EMPTY, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from '../services/auth.service';
-import { DOCUMENT } from '@angular/common';
 
 export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
     const authService = inject(AuthService);
@@ -12,11 +12,10 @@ export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
     const window = document.defaultView;
     const baseUrl = environment.VITE_API_URL;
 
-    // 1. 获取本地 Token
+    // 1. 获取本地 Token (排除 i18n 等静态资源) 
+    const isI18nRequest = req.url.includes('/i18n/') || req.url.endsWith('.json');
     const token = authService.getToken();
-    if (token) {
-        console.log('【Interceptor】Token found, injecting Authorization header');
-    } else {
+    if (!token && !isI18nRequest) {
         console.warn('【Interceptor】No token found for request:', req.url);
     }
 
@@ -66,4 +65,4 @@ export const apiUrlInterceptor: HttpInterceptorFn = (req, next) => {
             return throwError(() => error);
         })
     );
-};
+};

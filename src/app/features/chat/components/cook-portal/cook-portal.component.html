@@ -1,0 +1,62 @@
+<div class="flex flex-col items-center justify-center min-h-[60vh] text-center space-y-8 py-6 animate-fade-in">
+    <h2 class="text-3xl md:text-4xl font-semibold text-gray-800 dark:text-[#e3e3e3]">选择你想吃的主题</h2>
+    
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full max-w-5xl px-4">
+        @for (cat of cookCategories; track cat.id) {
+        <button (click)="onSelect(cat.name)"
+            class="relative aspect-[4/3] rounded-2xl overflow-hidden group shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+            <!-- Sliced Image using Background Position -->
+            <div class="absolute inset-0 bg-no-repeat bg-cover transition-transform duration-500 group-hover:scale-110"
+                 [style.backgroundImage]="'url(' + cat.image + ')'"
+                 [style.backgroundSize]="'200% 200%'"
+                 [style.backgroundPosition]="cat.pos">
+            </div>
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+            <!-- Text -->
+            <span class="absolute bottom-3 left-4 text-white font-medium text-lg">{{ cat.name }}</span>
+            <!-- Icon -->
+            <div class="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity">
+                <mat-icon class="!text-[20px] !w-5 !h-5 flex items-center justify-center">restaurant</mat-icon>
+            </div>
+        </button>
+        }
+    </div>
+
+    <!-- Recommended Section -->
+    <div class="w-full max-w-5xl px-4 mt-12 text-left">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-medium flex items-center gap-2 text-gray-800 dark:text-[#e3e3e3]">
+                <mat-icon class="text-red-500">favorite</mat-icon> 为您推荐
+            </h3>
+            <button class="text-sm text-gray-500 hover:text-primary transition-colors flex items-center gap-1">
+                换一批 <mat-icon class="!text-[16px] !w-4 !h-4 flex items-center justify-center">refresh</mat-icon>
+            </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            @for (recipe of recommendedRecipes; track recipe.id) {
+            <div (click)="onSelectRecipe(recipe.name)" 
+                 class="bg-white dark:bg-[#1e1f20] rounded-2xl overflow-hidden border border-gray-100 dark:border-[#444746] shadow-sm hover:shadow-md transition-shadow group cursor-pointer">
+                <div class="relative aspect-video overflow-hidden">
+                    <div class="absolute inset-0 bg-no-repeat bg-cover transition-transform duration-500 group-hover:scale-105"
+                         [style.backgroundImage]="'url(' + recipe.image + ')'"
+                         [style.backgroundSize]="'200% 200%'"
+                         [style.backgroundPosition]="recipe.pos">
+                    </div>
+                    <div class="absolute top-3 left-3 px-2 py-1 rounded-md text-[10px] font-bold text-white uppercase tracking-wider"
+                         [style.backgroundColor]="recipe.difficultyColor">
+                        {{ recipe.difficulty }}
+                    </div>
+                    <button class="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/20 backdrop-blur-md flex items-center justify-center text-white hover:text-red-500 transition-colors">
+                        <mat-icon class="!text-[18px] !w-5 !h-5 flex items-center justify-center">favorite_border</mat-icon>
+                    </button>
+                </div>
+                <div class="p-4">
+                    <h4 class="font-medium text-gray-900 dark:text-[#e3e3e3]">{{ recipe.name }}</h4>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
