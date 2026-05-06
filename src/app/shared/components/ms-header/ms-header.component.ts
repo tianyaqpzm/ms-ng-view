@@ -54,7 +54,10 @@ export class MsHeaderComponent implements OnInit {
     
     /** 当前路由状态 */
     protected currentUrl = signal('');
-    protected showSidebarToggle = computed(() => this.currentUrl().includes('/chat'));
+    protected showSidebarToggle = computed(() => {
+        const url = this.currentUrl();
+        return url.includes('/chat') || url.includes('/knowledge');
+    });
 
     /** 综合判断是否显示 */
     protected shouldShow = computed(() => {

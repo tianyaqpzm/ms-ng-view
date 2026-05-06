@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { RouterModule } from '@angular/router';
 import { Topic } from '../../core/domain/knowledge/knowledge.model';
 import { KnowledgeUseCase } from '../../core/use-cases/knowledge/knowledge.usecase';
+import { SidebarService } from '../../core/services/sidebar.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
@@ -38,8 +39,15 @@ export class ConfirmDialogComponent {
 })
 export class KnowledgeComponent implements OnInit {
   protected useCase = inject(KnowledgeUseCase);
+  private sidebarService = inject(SidebarService);
   private dialog = inject(MatDialog);
   private translate = inject(TranslateService);
+
+  protected get isSidebarOpen() { return this.sidebarService.isOpen; }
+  
+  toggleSidebar() {
+    this.sidebarService.toggle();
+  }
 
   // UI-only states
   editingTopicId = signal<string | null>(null);
@@ -66,6 +74,10 @@ export class KnowledgeComponent implements OnInit {
 
   selectTopic(id: string) {
     this.useCase.selectTopic(id);
+    // 移动端点击后自动收起侧边栏
+    if (window.innerWidth < 768) {
+      this.sidebarService.setOpen(false);
+    }
   }
 
   openCreateModal() {

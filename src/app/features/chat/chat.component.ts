@@ -149,10 +149,21 @@ export class ChatComponent {
     }
 
     /**
+     * 切换侧边栏状态
+     */
+    protected toggleSidebar() {
+        this.sidebarService.toggle();
+    }
+
+    /**
      * 调用 UseCase 开启新会话（导航回落地页）。
      */
     protected createNewSession() {
         this.chatUseCase.createNewSession();
+        // 移动端点击后自动收起侧边栏
+        if (window.innerWidth < 768) {
+            this.sidebarService.setOpen(false);
+        }
     }
 
     /**
@@ -161,6 +172,10 @@ export class ChatComponent {
      */
     protected switchSession(sessionId: string) {
         this.chatUseCase.switchSession(sessionId);
+        // 移动端点击后自动收起侧边栏
+        if (window.innerWidth < 768) {
+            this.sidebarService.setOpen(false);
+        }
     }
 
     /**

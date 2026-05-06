@@ -4,7 +4,7 @@ import { Injectable, signal } from '@angular/core';
   providedIn: 'root'
 })
 export class SidebarService {
-  isOpen = signal<boolean>(true);
+  isOpen = signal<boolean>(window.innerWidth >= 768);
 
   toggle() {
     this.isOpen.update(v => !v);
